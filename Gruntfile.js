@@ -8,6 +8,21 @@ module.exports = grunt => {
     clean: {
       dist: "dist",
     },
+    copy: {
+      third: {
+        files: [
+          {
+            expand: true,
+            cwd: "node_modules/typeface-roboto",
+            src: [
+              "index.css",
+              "files/**/*",
+            ],
+            dest: "dist/storyteller/third/roboto",
+          },
+        ],
+      },
+    },
   };
   const buildTasks = reactApp(
     gruntConfig,
@@ -18,9 +33,11 @@ module.exports = grunt => {
       }
     )
   );
-  console.log(JSON.stringify(gruntConfig, 2, " "));
   grunt.initConfig(gruntConfig);
   
-  grunt.registerTask("build", "Build the project's webapp", buildTasks);
+  grunt.registerTask("build", "Build the project's webapp", [
+    "copy:third",
+    ...buildTasks,
+  ]);
   grunt.registerTask("default", ["build"]);
 };
