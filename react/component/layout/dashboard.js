@@ -15,6 +15,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import MainMenu from "./mainmenu";
 import ProjectMenu from "./projectmenu";
 import ProjectSaveButton from "../project/savebutton";
+import ProjectTitle from "../project/title";
 
 const drawerWidth = 240;
 
@@ -129,7 +130,7 @@ class Dashboard extends React.Component {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              Story Teller
+            <ProjectTitle prefix="Story Teller" />
           </Typography>
           <ProjectSaveButton />
         </Toolbar>
