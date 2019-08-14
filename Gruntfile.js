@@ -33,6 +33,7 @@ module.exports = grunt => {
       }
     )
   );
+  console.log(JSON.stringify(gruntConfig, 2, " "));
   grunt.initConfig(gruntConfig);
   
   grunt.registerTask("build", "Build the project's webapp", [
