@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {Redirect} from "react-router-dom";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import form from "@cley_faye/react-utils/lib/mixin/form";
+import {notEmpty} from "@cley_faye/react-utils/lib/validator/string";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import ProjectCtx from "../../context/project";
@@ -31,7 +32,7 @@ class EditorNew extends React.Component {
       title: "unnamed project",
     });
     form(this, {
-      title: () => this.validateTitle(),
+      title: notEmpty("Title can't be empty"),
     });
   }
 
