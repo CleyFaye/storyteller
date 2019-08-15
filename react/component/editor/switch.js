@@ -5,6 +5,7 @@ import {Redirect} from "react-router-dom";
 import Welcome from "./welcome";
 import New from "./new";
 import Sequence from "./sequence";
+import Load from "./load";
 
 class EditorSwitch extends React.Component {
   render() {
@@ -12,6 +13,7 @@ class EditorSwitch extends React.Component {
       <Route exact path="/editor" component={Welcome} />
       <Route exact path="/editor/new" component={New} />
       <Route exact path="/editor/sequence" component={Sequence} />
+      <Route exact path="/editor/load" component={Load} />
       <Redirect to="/editor" />
     </Switch>;
   }

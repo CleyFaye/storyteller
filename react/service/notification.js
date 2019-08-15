@@ -7,6 +7,18 @@ export const notificationEnum = {
     id: Symbol("SAVEFAILURE"),
     label: "Error when saving project",
   },
+  networkReadError: {
+    id: Symbol("NETREADERROR"),
+    label: "An error occured while retrieving data",
+  },
+  loadSuccess: {
+    id: Symbol("LOADSUCCESS"),
+    label: "Project loaded",
+  },
+  loadFailure: {
+    id: Symbol("LOADFAILURE"),
+    label: "Error when loading project",
+  },
 };
 
 /** Show a notification based on its id */
