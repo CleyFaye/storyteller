@@ -1,16 +1,24 @@
+import {listExisting as apiListExisting} from "../api/project";
+
 /** Start a new project.
  * 
  * @param {Object} projectCtx
  * Active project context
  * 
+ * @param {Object} projectSettings
+ * New project's configuration
+ * 
+ * @param {string} projectSettings.title
+ * New project's title
+ * 
  * @return {Promise}
  * Resolve when done
  */
-export const newProject = projectCtx =>
+export const newProject = (projectCtx, projectSettings) =>
   projectCtx.update({
-    title: "unnamed project",
+    title: projectSettings.title,
     parts: [],
-    saved: true,
+    saved: false,
   });
 
 /** Load a project from a V1 file
@@ -107,3 +115,10 @@ export const needSave = projectCtx =>
  */
 export const isOpen = projectCtx =>
   projectCtx.title !== null;
+
+/** List existing projects on the server
+ * 
+ * @return {Promise<string[]>}
+ * List of projects on the server
+ */
+export const listExisting = () => apiListExisting();
