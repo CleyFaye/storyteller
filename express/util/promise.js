@@ -47,9 +47,12 @@ export const APIHandler = promiseFunc =>
     ).then(
       result => apiReply(result)
     ).catch(
-      error => apiError(
-        error.code === undefined ? -1 : error.code,
-        error.message === undefined ? "undefined error" : error.message
-      )
+      error => {
+        res.status(500);
+        return apiError(
+          error.code === undefined ? -1 : error.code,
+          error.message === undefined ? "undefined error" : error.message
+        );
+      }
     )
   );

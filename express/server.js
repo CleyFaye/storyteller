@@ -4,6 +4,7 @@ import routes from "./route";
 const app = express();
 const defaultPort = 6128;
 
+app.use(express.json());
 app.use(express.static("dist/storyteller"));
 app.use(routes);
 

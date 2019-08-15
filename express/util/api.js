@@ -35,8 +35,18 @@ export const apiError = (code, message) => ({
  * @param {number} code
  * @param {string} message
  */
-export const APIError = (code, message) => {
-  const error = new Error(message);
-  error.code = code;
+export const APIError = (errData) => {
+  const error = new Error(errData.message);
+  error.code = errData.code;
+  error.httpCode = errData.http;
   return error;
+};
+
+/** List of known error codes */
+export const errorCodes = {
+  PROJECT_ENOENT: {
+    code: "1",
+    http: 500,
+    message: "Project file not found",
+  }
 };
