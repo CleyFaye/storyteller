@@ -36,13 +36,6 @@ class EditorNew extends React.Component {
     });
   }
 
-  /** Form validation: title field */
-  validateTitle() {
-    if (this.state.title.length == 0) {
-      return "Title can't be empty";
-    }
-  }
-
   componentDidUpdate(prevProps, prevState) {
     this.validateUpdate(prevState);
   }

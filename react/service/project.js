@@ -122,3 +122,27 @@ export const isOpen = projectCtx =>
  * List of projects on the server
  */
 export const listExisting = () => apiListExisting();
+
+/** Build an empty chapter part */
+const buildNewChapterPart = partDef => ({
+  type: "chapter",
+  title: partDef.title,
+  variants: [],
+});
+
+/** Create a new empty part from a basic definitions */
+const buildNewPart = partDef => {
+  switch (partDef.type) {
+  case "chapter":
+    return buildNewChapterPart(partDef);
+  default:
+    throw new Error(`Unknown part type: "${partDef.type}"`);
+  }
+};
+
+/** Add a new part to the current project */
+export const addPart = (projectCtx, partDef) =>
+  projectCtx.update({
+    parts: projectCtx.parts.concat([buildNewPart(partDef)]),
+    saved: false,
+  });
