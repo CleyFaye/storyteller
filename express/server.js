@@ -4,7 +4,7 @@ import routes from "./route";
 const app = express();
 const defaultPort = 6128;
 
-app.use("/app", express.static("dist/storyteller"));
+app.use(express.static("dist/storyteller"));
 app.use(routes);
 
 const server = app.listen(defaultPort, "localhost", () => {

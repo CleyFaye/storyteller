@@ -16,6 +16,7 @@ import MainMenu from "./mainmenu";
 import ProjectMenu from "./projectmenu";
 import ProjectSaveButton from "../project/savebutton";
 import ProjectTitle from "../project/title";
+import EditorSwitch from "../editor/switch.js";
 
 const drawerWidth = 240;
 
@@ -153,14 +154,13 @@ class Dashboard extends React.Component {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          {this.props.children}
+          <EditorSwitch />
         </Container>
       </main>
     </div>;
   }
 }
 Dashboard.propTypes = {
-  children: PropTypes.node,
   classes: PropTypes.object.isRequired,
 };
 
