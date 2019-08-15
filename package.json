@@ -23,8 +23,6 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
-    "@cley_faye/boilerplate": "file:../boilerplate/cley_faye-boilerplate-0.2.0.tgz",
-    "@cley_faye/react-utils": "file:../react-utils/cley_faye-react-utils-0.2.0.tgz",
     "@material-ui/core": "^4.3.2",
     "@material-ui/icons": "^4.2.1",
     "axios": "^0.19.0",
@@ -48,6 +46,8 @@
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.0.1",
     "typeface-roboto": "0.0.75",
+    "@cley_faye/boilerplate": "^0.2.1",
+    "@cley_faye/react-utils": "^0.3.0",
     "webpack": "^4.39.2"
   },
   "dependencies": {
