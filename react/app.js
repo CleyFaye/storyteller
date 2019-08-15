@@ -4,7 +4,7 @@ import {Route} from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import {Switch} from "react-router-dom";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import Dashboard from "./component/layout/dashboard";
+import Editor from "./component/editor/editor";
 import ProjectCtx from "./context/project";
 import {needSave} from "./service/project";
 
@@ -37,7 +37,7 @@ export default class App extends React.Component {
         <BrowserRouter
           basename="/app">
           <Switch>
-            <Route path="/editor" component={Dashboard} />
+            <Route path="/editor" component={Editor} />
             <Route path="/player" component={null} />
             <Redirect from="/" to="/editor" />
           </Switch>
