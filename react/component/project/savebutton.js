@@ -25,6 +25,7 @@ class SaveButton extends React.Component {
   }
 
   renderSnackbar() {
+    // TODO move this into a globally available "snackbar" component
     return <Snackbar
       open={this.state.errorPopup}
       autoHideDuration={6000}

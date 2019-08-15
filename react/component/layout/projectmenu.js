@@ -20,7 +20,7 @@ const newProjectEntry = {
 const loadProjectEntry = {
   icon: OpenInBrowserIcon,
   label: "Open…",
-  action: "open",
+  path: "/editor/load",
 };
 
 /** List of options when no project are open */
