@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {Redirect} from "react-router-dom";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
+import form from "@cley_faye/react-utils/lib/mixin/form";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import ProjectCtx from "../../context/project";
@@ -29,12 +29,10 @@ class EditorNew extends React.Component {
     exState(this, {
       step: steps.NEW_FORM,
       title: "unnamed project",
-      titleError: null,
     });
-    changeHandler(this);
-    this.formFields = {
+    form(this, {
       title: () => this.validateTitle(),
-    };
+    });
   }
 
   /** Form validation: title field */
@@ -44,43 +42,8 @@ class EditorNew extends React.Component {
     }
   }
 
-  /** Validate either a subset of fields or all the fields.
-   * 
-   * @return {Promise<bool>}
-   * true if all the fields are valid, false otherwise
-   */
-  validateForm(listToValidate) {
-    if (listToValidate === undefined) {
-      listToValidate = Object.keys(this.formFields);
-    }
-    return Promise.all(listToValidate.map(key =>
-      // Done to be able to mix up direct return and promise-based validators
-      Promise.all([this.formFields[key]()]).then(
-        res => this.updateState({[`${key}Error`]: res[0] || null}))
-    )).then(
-      () => Object.keys(this.formFields).reduce(
-        (acc, key) => {
-          if (this.state[`${key}Error`]) {
-            return false;
-          }
-          return acc;
-        },
-        true
-      )
-    );
-  }
-
   componentDidUpdate(prevProps, prevState) {
-    const listToValidate = Object.keys(this.formFields).reduce(
-      (fieldsList, key) => {
-        if (prevState[key] != this.state[key]) {
-          fieldsList.push(key);
-        }
-        return fieldsList;
-      },
-      []
-    );
-    this.validateForm(listToValidate);
+    this.validateUpdate(prevState);
   }
 
   /** User clicked on the "New project" button */
