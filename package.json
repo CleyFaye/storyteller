@@ -10,7 +10,8 @@
     "storyteller": "main.js"
   },
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "prepack": "grunt clean build"
   },
   "repository": {
     "type": "git",
@@ -60,5 +61,9 @@
   "nodemonConfig": {
     "watch": "express",
     "exec": "node main.js"
-  }
+  },
+  "files": [
+    "dist/**/*",
+    "express/**/*"
+  ]
 }
