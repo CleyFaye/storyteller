@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
 import {Redirect} from "react-router-dom";
 import ProjectCtx from "../../context/project";
-import {isOpen} from "../../service/project";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 
 class EditorWelcome extends React.Component {
@@ -15,7 +14,7 @@ class EditorWelcome extends React.Component {
   }
 
   checkIsOpen() {
-    if (isOpen(this.props.projectCtx)) {
+    if (this.props.projectCtx.isOpen()) {
       this.updateState({redirectTo: "/editor/sequence"});
     }
   }
@@ -25,7 +24,7 @@ class EditorWelcome extends React.Component {
   }
 
   componentDidUpdate(oldProps) {
-    if (isOpen(oldProps.projectCtx) != isOpen(this.props.projectCtx)) {
+    if (oldProps.projectCtx.isOpen() != this.props.projectCtx.isOpen()) {
       this.checkIsOpen();
     }
   }

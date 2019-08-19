@@ -6,7 +6,6 @@ import {Switch} from "react-router-dom";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import Editor from "./component/editor/editor";
 import ProjectCtx from "./context/project";
-import {needSave} from "./service/project";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,7 +13,7 @@ export default class App extends React.Component {
     exState(this, {});
     ProjectCtx.init(this);
     this._registeredExitHandler = e => {
-      if (needSave(this.state.projectCtx)) {
+      if (this.state.projecCtx.needSave()) {
         e.preventDefault();
         const str = "You have unsaved changes. Exit anyway?";
         e.returnValue = str;

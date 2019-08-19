@@ -4,8 +4,7 @@ import {saveProject as apiSaveProject} from "../api/project";
 
 /** Start a new project.
  * 
- * @param {Object} projectCtx
- * Active project context
+ * Bound to context
  * 
  * @param {Object} projectSettings
  * New project's configuration
@@ -16,8 +15,8 @@ import {saveProject as apiSaveProject} from "../api/project";
  * @return {Promise}
  * Resolve when done
  */
-export const newProject = (projectCtx, projectSettings) =>
-  projectCtx.update({
+export const newProject = (ctx, projectSettings) =>
+  ctx.update({
     title: projectSettings.title,
     parts: [],
     saved: false,
@@ -43,8 +42,7 @@ const loadProjectV1 = (projectCtx, projectData) =>
 
 /** Load a project from a name
  * 
- * @param {Object} projectCtx
- * Active project context
+ * Bound to context
  * 
  * @param {string} projectName
  * Name of the project to open
@@ -52,7 +50,7 @@ const loadProjectV1 = (projectCtx, projectData) =>
  * @return {Promise}
  * Resolve when done
  */
-export const loadProject = (projectCtx, projectName) =>
+export const loadProject = (ctx, projectName) =>
   apiLoadProject(projectName)
     .then(projectData => {
       if (projectData.version === undefined) {
@@ -60,7 +58,7 @@ export const loadProject = (projectCtx, projectName) =>
       }
       switch (projectData.version) {
       case 1:
-        return loadProjectV1(projectCtx, projectData);
+        return loadProjectV1(ctx, projectData);
       default:
         return Promise.reject(new Error("Unsupported project version"));
       }
@@ -68,16 +66,15 @@ export const loadProject = (projectCtx, projectName) =>
 
 /** Save the current project 
  * 
- * @param {Object} projectCtx
- * Active project context
+ * Bound to context.
  * 
  * @return {Promise}
  * Resolve when saved
  */
-export const saveProject = projectCtx => Promise.resolve(needSave(projectCtx))
+export const saveProject = ctx => Promise.resolve(ctx.needSave())
   .then(haveToSave => {
     if (haveToSave) {
-      return realSaveProject(projectCtx);
+      return realSaveProject(ctx);
     }
   });
 
@@ -96,25 +93,23 @@ const realSaveProject = projectCtx => Promise.resolve(
 
 /** Determine if the project need saving
  * 
- * @param {Object} projectCtx
- * Active project context
+ * Bound to context
  * 
  * @return {bool}
  * true if the project need saving
  */
-export const needSave = projectCtx =>
-  isOpen(projectCtx) && projectCtx.saved === false;
+export const needSave = ctx =>
+  ctx.isOpen() && ctx.saved === false;
 
 /** Check if a project is open
  * 
- * @param {Object} projectCtx
- * Active project context
+ * Bound to context.
  * 
  * @return {bool}
  * true if a project is open
  */
-export const isOpen = projectCtx =>
-  projectCtx.title !== null;
+export const isOpen = ctx =>
+  ctx.title !== null;
 
 /** List existing projects on the server
  * 
@@ -140,9 +135,21 @@ const buildNewPart = partDef => {
   }
 };
 
-/** Add a new part to the current project */
-export const addPart = (projectCtx, partDef) =>
-  projectCtx.update({
-    parts: projectCtx.parts.concat([buildNewPart(partDef)]),
+/** Add a new part to the current project.
+ * 
+ * Bound to context.
+*/
+export const addPart = (ctx, partDef) =>
+  ctx.update({
+    parts: ctx.parts.concat([buildNewPart(partDef)]),
     saved: false,
   });
+
+export const contextFunctions = {
+  addPart,
+  isOpen,
+  loadProject,
+  needSave,
+  newProject,
+  saveProject,
+};

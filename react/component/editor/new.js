@@ -7,8 +7,6 @@ import {notEmpty} from "@cley_faye/react-utils/lib/validator/string";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import ProjectCtx from "../../context/project";
-import {needSave} from "../../service/project";
-import {newProject} from "../../service/project";
 import {listExisting} from "../../service/project";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -47,7 +45,7 @@ class EditorNew extends React.Component {
         if (!formValid) {
           return;
         }
-        if (needSave(this.props.projectCtx)) {
+        if (this.props.projectCtx.needSave()) {
           this.updateState({step: steps.CONFIRM_NEW});
         } else {
           this.handleConfirmNew();
@@ -73,7 +71,7 @@ class EditorNew extends React.Component {
   /** Either the project is a new one, or the user confirmed erasing the old one
    */
   handleConfirmErase() {
-    newProject(this.props.projectCtx, {
+    this.props.projectCtx.newProject({
       title: this.state.title,
     }).then(() => this.updateState({step: steps.END}));
   }

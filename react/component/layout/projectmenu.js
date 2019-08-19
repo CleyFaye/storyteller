@@ -8,7 +8,6 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ProjectCtx from "../../context/project";
-import {isOpen} from "../../service/project";
 import {buildMenuList} from "./util";
 
 const newProjectEntry = {
@@ -52,7 +51,7 @@ const openProjectEntries = [
 
 class ProjectMenu extends React.Component {
   renderMenu() {
-    if (!isOpen(this.props.projectCtx)) {
+    if (!this.props.projectCtx.isOpen()) {
       return buildMenuList(noProjectEntries);
     }
     return buildMenuList(openProjectEntries);

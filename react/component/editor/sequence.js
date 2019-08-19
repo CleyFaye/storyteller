@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import {Redirect} from "react-router-dom";
 import ProjectCtx from "../../context/project";
-import {isOpen} from "../../service/project";
-import {addPart} from "../../service/project";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -23,7 +21,7 @@ class Sequence extends React.Component {
   }
 
   componentDidMount() {
-    if (!isOpen(this.props.projectCtx)) {
+    if (!this.props.projectCtx.isOpen()) {
       this.updateState({redirectTo: "/editor"});
     }
   }
@@ -37,7 +35,7 @@ class Sequence extends React.Component {
   handleAddPart(partDef) {
     this.updateState({
       addDialog: false,
-    }).then(() => addPart(this.props.projectCtx, partDef));
+    }).then(() => this.props.projectCtx.addPart(partDef));
   }
 
   renderAddDialog() {
@@ -100,7 +98,7 @@ class Sequence extends React.Component {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-    if (!isOpen(this.props.projectCtx)) {
+    if (!this.props.projectCtx.isOpen()) {
       return <Typography variant="body1">
         Loading…
       </Typography>;

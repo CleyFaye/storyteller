@@ -3,15 +3,12 @@ import PropTypes from "prop-types";
 import ProjectCtx from "../../context/project";
 import {Redirect} from "react-router-dom";
 import NotificationCtx from "../../context/notification";
-import {loadProject} from "../../service/project";
-import {needSave} from "../../service/project";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import {listExisting} from "../../service/project";
 import {notificationEnum} from "../../service/notification";
-import {show as showNotification} from "../../service/notification";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -35,8 +32,7 @@ class Load extends React.Component {
       .then(availableProjects => this.updateState({
         availableProjects
       }))
-      .catch(() => showNotification(
-        this.props.notificationCtx,
+      .catch(() => this.props.notificationCtx.show(
         notificationEnum.networkReadError));
   }
 
@@ -44,7 +40,7 @@ class Load extends React.Component {
   handleLoad(projectName) {
     this.updateState({loadItem: projectName})
       .then(() => {
-        if (needSave(this.props.projectCtx)) {
+        if (this.props.projectCtx.needSave()) {
           this.updateState({showWarning: true});
         } else {
           this.handleLoadConfirm();
@@ -55,15 +51,13 @@ class Load extends React.Component {
   /** User confirmed loading */
   handleLoadConfirm() {
     this.updateState({showWarning: false})
-      .then(() => loadProject(this.props.projectCtx, this.state.loadItem))
-      .then(() => showNotification(
-        this.props.notificationCtx,
+      .then(() => this.props.projectCtx.loadProject(this.state.loadItem))
+      .then(() => this.props.notificationCtx.show(
         notificationEnum.loadSuccess))
       .then(() => this.updateState({redirectTo: "/editor/sequence"}))
       .catch(
         () => this.updateState({loadItem: null})
-          .then(() => showNotification(
-            this.props.notificationCtx,
+          .then(() => this.props.notificationCtx.show(
             notificationEnum.loadFailure))
       );
   }
