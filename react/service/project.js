@@ -160,7 +160,10 @@ export const addPart = (ctx, partDef) =>
 export const movePart = (ctx, from, to) => {
   const parts = ctx.parts.slice();
   parts.splice(to, 0, parts.splice(from, 1)[0]);
-  return ctx.update({parts});
+  return ctx.update({
+    parts,
+    saved: false,
+  });
 };
 
 export const contextFunctions = {
