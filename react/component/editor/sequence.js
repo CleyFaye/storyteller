@@ -8,6 +8,10 @@ import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import AddPart from "./dialog/addpart";
 
 class Sequence extends React.Component {
@@ -54,12 +58,32 @@ class Sequence extends React.Component {
     </Button>;
   }
 
+  renderMoveUpButton(id) {
+    return <IconButton
+      disabled={id <= 0}
+      onClick={() => this.props.projectCtx.movePart(id, id - 1)}>
+      <ArrowUpwardIcon />
+    </IconButton>;
+  }
+
+  renderMoveDownButton(id) {
+    return <IconButton
+      disabled={id >= (this.props.projectCtx.parts.length - 1)}
+      onClick={() => this.props.projectCtx.movePart(id, id + 1)}>
+      <ArrowDownwardIcon />
+    </IconButton>;
+  }
+
   renderPartItem(part, id) {
     if (part.type == "chapter") {
       return <ListItem
         key={id}
         button>
         <ListItemText primary={part.title} />
+        <ListItemSecondaryAction>
+          {this.renderMoveUpButton(id)}
+          {this.renderMoveDownButton(id)}
+        </ListItemSecondaryAction>
       </ListItem>;
     }
     throw new Error(`Unknown part type: "${part.type}"`);

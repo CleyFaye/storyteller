@@ -145,10 +145,29 @@ export const addPart = (ctx, partDef) =>
     saved: false,
   });
 
+/** Move a part to another index
+ * 
+ * Bound to context.
+ * 
+ * @param {number} from
+ * Id of the part to move
+ * 
+ * @param {number} to
+ * Part new index
+ * 
+ * @return {Promise}
+ */
+export const movePart = (ctx, from, to) => {
+  const parts = ctx.parts.slice();
+  parts.splice(to, 0, parts.splice(from, 1)[0]);
+  return ctx.update({parts});
+};
+
 export const contextFunctions = {
   addPart,
   isOpen,
   loadProject,
+  movePart,
   needSave,
   newProject,
   saveProject,
