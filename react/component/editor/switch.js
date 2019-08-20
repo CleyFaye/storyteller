@@ -10,11 +10,11 @@ import Load from "./load";
 class EditorSwitch extends React.Component {
   render() {
     return <Switch>
-      <Route exact path="/editor" component={Welcome} />
-      <Route exact path="/editor/new" component={New} />
-      <Route exact path="/editor/sequence" component={Sequence} />
-      <Route exact path="/editor/load" component={Load} />
-      <Redirect to="/editor" />
+      <Route path="/editor/welcome" component={Welcome} />
+      <Route path="/editor/new" component={New} />
+      <Route path="/editor/sequence" component={Sequence} />
+      <Route path="/editor/load" component={Load} />
+      <Redirect to="/editor/welcome" />
     </Switch>;
   }
 }

@@ -167,7 +167,7 @@ class EditorNew extends React.Component {
 
   renderEndRedirect() {
     return this.state.step == steps.END
-      ? <Redirect to="/editor" />
+      ? <Redirect to="/editor/welcome" />
       : null;
   }
 
