@@ -1,6 +1,10 @@
 import {listExisting as apiListExisting} from "../api/project";
 import {loadProject as apiLoadProject} from "../api/project";
 import {saveProject as apiSaveProject} from "../api/project";
+import {buildNew as buildNewPart} from "./project/part";
+import {loadIntoContext as loadPartIntoContextRaw} from "./project/part";
+import {saveFromContext as savePartFromContextRaw} from "./project/part";
+import {isDifferent as isPartDifferentRaw} from "./project/part";
 
 /** Start a new project.
  * 
@@ -118,23 +122,6 @@ export const isOpen = ctx =>
  */
 export const listExisting = () => apiListExisting();
 
-/** Build an empty chapter part */
-const buildNewChapterPart = partDef => ({
-  type: "chapter",
-  title: partDef.title,
-  variants: [],
-});
-
-/** Create a new empty part from a basic definitions */
-const buildNewPart = partDef => {
-  switch (partDef.type) {
-  case "chapter":
-    return buildNewChapterPart(partDef);
-  default:
-    throw new Error(`Unknown part type: "${partDef.type}"`);
-  }
-};
-
 /** Add a new part to the current project.
  * 
  * Bound to context.
@@ -166,12 +153,53 @@ export const movePart = (ctx, from, to) => {
   });
 };
 
+/** Extract data from a part and return the useful fields
+ * 
+ * Always return copies, not reference to the context object itself.
+ * 
+ * - chapter: return title and variants
+ * 
+ * Context bound.
+ * 
+ * @param {number} partId
+ * 
+ * @return {Object}
+ */
+export const loadPartIntoContext = (ctx, partId) =>
+  loadPartIntoContextRaw(ctx.parts[partId]);
+
+/** Replace a part from data provided by an editor context
+ * 
+ * Context bound.
+ * 
+ * @param {number} partId
+ * 
+ * @param {Object} contextData
+ * The data updated from the result of loadPartIntoContext()
+ * 
+ * @return {Promise}
+ */
+export const savePartFromContext = (ctx, partId, contextData) => {
+  const parts = ctx.parts.slice();
+  parts[partId] = savePartFromContextRaw(contextData);
+  return ctx.update({
+    parts,
+    saved: false,
+  });
+};
+
+export const isPartDifferent = (ctx, partId, contextData) =>
+  isPartDifferentRaw(ctx.parts[partId], contextData);
+
 export const contextFunctions = {
   addPart,
   isOpen,
+  isPartDifferent,
+  loadPartIntoContext,
   loadProject,
   movePart,
   needSave,
   newProject,
+  savePartFromContext,
   saveProject,
 };

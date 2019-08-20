@@ -19,6 +19,10 @@ export const notificationEnum = {
     id: Symbol("LOADFAILURE"),
     label: "Error when loading project",
   },
+  partSaved: {
+    id: Symbol("PARTSAVED"),
+    label: "Current part saved",
+  },
 };
 
 /** Show a notification based on its id.

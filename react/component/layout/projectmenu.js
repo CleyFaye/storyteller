@@ -44,7 +44,7 @@ const openProjectEntries = [
   loadProjectEntry,
   {
     icon: SaveIcon,
-    label: "Save…",
+    label: "Save",
     action: "save",
   }
 ];

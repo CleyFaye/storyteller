@@ -4,6 +4,7 @@ import {Switch} from "react-router-dom";
 import {Route} from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import Parts from "./sequence/parts";
+import Part from "./sequence/part";
 import ProjectCtx from "../../context/project";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 
@@ -27,6 +28,7 @@ class Sequence extends React.Component {
     }
     return <Switch>
       <Route path="/editor/sequence/parts" component={Parts} />
+      <Route path="/editor/sequence/part/:partId" component={Part} />
       <Redirect to="/editor/sequence/parts" />
     </Switch>;
   }

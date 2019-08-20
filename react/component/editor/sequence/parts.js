@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {Redirect} from "react-router-dom";
 import ProjectCtx from "../../../context/project";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import Typography from "@material-ui/core/Typography";
@@ -11,7 +12,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import AddPart from "../dialog/addpart";
+import AddPart from "./dialog/addpart";
 
 /** Display all parts */
 class Parts extends React.Component {
@@ -19,7 +20,7 @@ class Parts extends React.Component {
     super(props);
     exState(this, {
       addDialog: false,
-      editingPart: null,
+      redirectTo: null,
     });
   }
 
@@ -67,10 +68,17 @@ class Parts extends React.Component {
     </IconButton>;
   }
 
+  openPart(partId) {
+    this.updateState({
+      redirectTo: `/editor/sequence/part/${partId}`,
+    });
+  }
+
   renderPartItem(part, id) {
     if (part.type == "chapter") {
       return <ListItem
         key={id}
+        onClick={() => this.openPart(id)}
         button>
         <ListItemText primary={part.title} />
         <ListItemSecondaryAction>
@@ -116,6 +124,9 @@ class Parts extends React.Component {
       return <Typography variant="body1">
         Loading…
       </Typography>;
+    }
+    if (this.state.redirectTo) {
+      return <Redirect to={this.state.redirectTo} />;
     }
     return <React.Fragment>
       {this.renderAddDialog()}
