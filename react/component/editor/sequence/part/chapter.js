@@ -5,19 +5,27 @@ import ProjectCtx from "../../../../context/project";
 import NotificationCtx from "../../../../context/notification";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
 import Fab from "@material-ui/core/Fab";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import form from "@cley_faye/react-utils/lib/mixin/form";
 import SaveIcon from "@material-ui/icons/Save";
+import NoteAddIcon from "@material-ui/icons/NoteAdd";
 import {notEmpty} from "@cley_faye/react-utils/lib/validator/string";
 import {notificationEnum} from "../../../../service/notification";
 import {withStyles} from "@material-ui/core/styles";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const styles = theme => ({
   fab: {
     position: "absolute",
     right: theme.spacing(2),
     bottom: theme.spacing(2),
+  },
+  variantEditor: {
+    padding: theme.spacing(2),
   },
 });
 
@@ -101,6 +109,69 @@ class Chapter extends React.Component {
     return null;
   }
 
+  handleAddVariant() {
+    const partVariants = this.state.partVariants.concat([""]);
+    this.updateState({
+      partVariants,
+    });
+  }
+
+  handleRemoveVariant(variantId) {
+    const partVariants = this.state.partVariants.slice();
+    partVariants.splice(variantId, 1);
+    this.updateState({
+      partVariants,
+    });
+  }
+
+  renderAddVariantButton(topButton) {
+    if (topButton && this.state.partVariants.length < 4) {
+      return null;
+    }
+    return <Button
+      variant="contained"
+      onClick={() => this.handleAddVariant()}
+      color="primary">
+      <NoteAddIcon />
+      Add variant
+    </Button>;
+  }
+
+  updateVariant(variantId, newValue) {
+    const partVariants = this.state.partVariants.slice();
+    partVariants[variantId] = newValue;
+    this.updateState({
+      partVariants,
+    });
+  }
+
+  /** Render a single editor */
+  renderVariantEditor(variantId) {
+    return <Paper className={this.props.classes.variantEditor}>
+      <TextField
+        variant="filled"
+        multiline
+        label={`Variant ${variantId}`}
+        value={this.state.partVariants[variantId]}
+        onChange={e => this.updateVariant(variantId, e.target.value)} />
+      <IconButton onClick={() => this.handleRemoveVariant(variantId)}>
+        <DeleteIcon />
+      </IconButton>
+    </Paper>;
+  }
+
+  renderVariants() {
+    const editors = [];
+    for (let i = 0; i < this.state.partVariants.length; ++i) {
+      editors.push(this.renderVariantEditor(i));
+    }
+    return <React.Fragment>
+      {this.renderAddVariantButton(true)}
+      {editors}
+      {this.renderAddVariantButton(false)}
+    </React.Fragment>;
+  }
+
   render() {
     console.log("RENDER");
     if (this.state.partTitle === null) {
@@ -118,6 +189,7 @@ class Chapter extends React.Component {
         helperText={this.state.partTitleError}
         value={this.state.partTitle}
         onChange={this.changeHandler("partTitle")} />
+      {this.renderVariants()}
       {this.renderSaveButton()}
       {this.renderPrompt()}
     </React.Fragment>;

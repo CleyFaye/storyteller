@@ -35,6 +35,10 @@ const isChapterDifferent = (partData, contextData) => {
   return false;
 };
 
+const getChapterTitle = partData =>
+  `${partData.title} (${partData.variants.length} `
+  + `variant${partData.variants.length > 1 ? "s" : ""})`;
+
 /** Possible part types */
 export const PartTypes = {
   chapter: {
@@ -50,6 +54,8 @@ export const PartTypes = {
     // Check if a context state is different from the stored part (=if it need
     // to be saved)
     isDifferent: isChapterDifferent,
+    // Get a display title for editor UI
+    getTitle: getChapterTitle,
   }
 };
 
@@ -99,4 +105,9 @@ export const isDifferent = (part, contextData) => {
   }
   const partTypeDef = getPartType(part.type);
   return partTypeDef.isDifferent(part, contextData);
+};
+
+export const getTitle = partData => {
+  const partTypeDef = getPartType(partData.type);
+  return partTypeDef.getTitle(partData);
 };

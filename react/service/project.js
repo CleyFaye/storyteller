@@ -5,6 +5,7 @@ import {buildNew as buildNewPart} from "./project/part";
 import {loadIntoContext as loadPartIntoContextRaw} from "./project/part";
 import {saveFromContext as savePartFromContextRaw} from "./project/part";
 import {isDifferent as isPartDifferentRaw} from "./project/part";
+import {getTitle as getPartTitleRaw} from "./project/part";
 
 /** Start a new project.
  * 
@@ -191,8 +192,12 @@ export const savePartFromContext = (ctx, partId, contextData) => {
 export const isPartDifferent = (ctx, partId, contextData) =>
   isPartDifferentRaw(ctx.parts[partId], contextData);
 
+export const getPartTitle = (ctx, partId) =>
+  getPartTitleRaw(ctx.parts[partId]);
+
 export const contextFunctions = {
   addPart,
+  getPartTitle,
   isOpen,
   isPartDifferent,
   loadPartIntoContext,

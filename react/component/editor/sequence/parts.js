@@ -80,7 +80,7 @@ class Parts extends React.Component {
         key={id}
         onClick={() => this.openPart(id)}
         button>
-        <ListItemText primary={part.title} />
+        <ListItemText primary={this.props.projectCtx.getPartTitle(id)} />
         <ListItemSecondaryAction>
           {this.renderMoveUpButton(id)}
           {this.renderMoveDownButton(id)}
