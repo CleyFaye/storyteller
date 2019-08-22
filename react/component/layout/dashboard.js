@@ -148,8 +148,8 @@ class Dashboard extends React.Component {
             <ChevronLeftIcon />
           </IconButton>
         </div>
-        <MainMenu />
         <ProjectMenu />
+        <MainMenu />
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

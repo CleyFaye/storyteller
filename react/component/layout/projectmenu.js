@@ -4,11 +4,13 @@ import OpenInBrowserIcon from "@material-ui/icons/OpenInBrowser";
 import CreateIcon from "@material-ui/icons/Create";
 import SaveIcon from "@material-ui/icons/Save";
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import SettingsIcon from "@material-ui/icons/Settings";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ProjectCtx from "../../context/project";
+import NotificationCtx from "../../context/notification";
+import SaveCtx from "../../context/save";
 import {buildMenuList} from "./util";
+import {dispatch as dispatchAction} from "../../service/action";
 
 const newProjectEntry = {
   icon: CreateIcon,
@@ -30,11 +32,6 @@ const noProjectEntries = [
 
 const openProjectEntries = [
   {
-    icon: SettingsIcon,
-    label: "Project settings",
-    path: "/editor/projectSettings",
-  },
-  {
     icon: DashboardIcon,
     label: "Sequence editor",
     path: "/editor/sequence",
@@ -52,10 +49,20 @@ const openProjectEntries = [
 class ProjectMenu extends React.Component {
   renderMenu() {
     if (!this.props.projectCtx.isOpen()) {
-      return buildMenuList(noProjectEntries);
+      return buildMenuList(noProjectEntries, action => this.runAction(action));
     }
-    return buildMenuList(openProjectEntries);
+    return buildMenuList(openProjectEntries, action => this.runAction(action));
   }
+
+  /** Run an action */
+  runAction(actionName) {
+    dispatchAction(
+      actionName,
+      this.props.projectCtx,
+      this.props.saveCtx,
+      this.props.notificationCtx);
+  }
+
   render() {
     return <React.Fragment>
       <Divider />
@@ -67,6 +74,10 @@ class ProjectMenu extends React.Component {
 }
 ProjectMenu.propTypes = {
   projectCtx: PropTypes.object,
+  notificationCtx: PropTypes.object,
+  saveCtx: PropTypes.object,
 };
 
-export default ProjectCtx.withCtx(ProjectMenu);
+export default ProjectCtx.withCtx(
+  SaveCtx.withCtx(
+    NotificationCtx.withCtx(ProjectMenu)));

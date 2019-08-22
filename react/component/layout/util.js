@@ -15,7 +15,7 @@ const renderMenuEntryContent = entry => <React.Fragment>
   <ListItemText primary={entry.label} />
 </React.Fragment>;
 
-const handleMenuEntry = entry => {
+const handleMenuEntry = (entry, actionHandler) => {
   if (entry.path) {
     return <ListItem
       button
@@ -26,15 +26,18 @@ const handleMenuEntry = entry => {
       {renderMenuEntryContent(entry)}
     </ListItem>;
   } else if (entry.action) {
-    return <ListItem button key={entry.action}>
+    return <ListItem
+      button
+      onClick={() => actionHandler(entry.action)}
+      key={entry.action}>
       {renderMenuEntryContent(entry)}
     </ListItem>;
   }
 };
 
-export const buildMenuList = menuEntries => {
+export const buildMenuList = (menuEntries, actionHandler) => {
   let dividerId = 0;
   return menuEntries.map(entry => entry == "divider"
     ? <Divider key={`divider${++dividerId}`} />
-    : handleMenuEntry(entry));
+    : handleMenuEntry(entry, actionHandler));
 };
