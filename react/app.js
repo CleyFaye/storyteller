@@ -19,7 +19,8 @@ export default class App extends React.Component {
 
   registerExitHandler() {
     this._registeredExitHandler = e => {
-      if (this.state.projectCtx.needSave()) {
+      if (this.state.projectCtx.needSave()
+        || this.state.saveCtx.needSave) {
         e.preventDefault();
         const str = "You have unsaved changes. Exit anyway?";
         e.returnValue = str;
