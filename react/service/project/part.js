@@ -20,7 +20,6 @@ const saveChapterFromContext = contextData => ({
 });
 
 const isChapterDifferent = (partData, contextData) => {
-  console.log("IS CHAPT DIFF", partData, contextData);
   if (partData.title != contextData.partTitle) {
     return true;
   }

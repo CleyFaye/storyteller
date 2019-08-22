@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {Prompt} from "react-router-dom";
 import ProjectCtx from "../../../../context/project";
 import NotificationCtx from "../../../../context/notification";
+import SaveCtx from "../../../../context/save";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -49,16 +50,21 @@ class Chapter extends React.Component {
 
   componentDidMount() {
     this.loadPart();
+    this.props.saveCtx.registerEditor(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("PROP STUFF");
     if (prevProps.partId != this.props.partId) {
       this.loadPart();
       this.resetState();
     } else {
       this.validateUpdate(prevState);
     }
+    this.props.saveCtx.updateSaveState();
+  }
+
+  componentWillUnmount() {
+    this.props.saveCtx.unregisterEditor(this);
   }
 
   /** User hit save */
@@ -68,16 +74,20 @@ class Chapter extends React.Component {
         if (!formValid) {
           return;
         }
-        return this.handleSaveConfirm();
+        return this.doSave();
       });
   }
 
   /** Save request, form is valid */
-  handleSaveConfirm() {
+  doSave() {
     return this.props.projectCtx.savePartFromContext(
       this.props.partId,
       this.state,
-    ).then(() => this.props.notificationCtx.show(notificationEnum.partSaved));
+    ).then(
+      () => this.props.notificationCtx.show(notificationEnum.partSaved)
+    ).then(
+      () => this.props.saveCtx.updateSaveState()
+    );
   }
 
   loadPart() {
@@ -198,10 +208,12 @@ class Chapter extends React.Component {
 Chapter.propTypes = {
   projectCtx: PropTypes.object,
   notificationCtx: PropTypes.object,
+  saveCtx: PropTypes.object,
   partId: PropTypes.number,
   classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(
   NotificationCtx.withCtx(
-    ProjectCtx.withCtx(Chapter)));
+    ProjectCtx.withCtx(
+      SaveCtx.withCtx(Chapter))));

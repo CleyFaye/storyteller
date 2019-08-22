@@ -6,12 +6,14 @@ import {Switch} from "react-router-dom";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import Editor from "./component/editor/editor";
 import ProjectCtx from "./context/project";
+import SaveCtx from "./context/save";
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     exState(this, {});
     ProjectCtx.init(this);
+    SaveCtx.init(this);
     this.registerExitHandler();
   }
 
@@ -37,14 +39,16 @@ export default class App extends React.Component {
   render() {
     return <React.Fragment>
       <ProjectCtx.Provider stateRef={this}>
-        <BrowserRouter
-          basename="/app">
-          <Switch>
-            <Route path="/editor" component={Editor} />
-            <Route path="/player" component={null} />
-            <Redirect from="/" to="/editor" />
-          </Switch>
-        </BrowserRouter>
+        <SaveCtx.Provider stateRef={this}>
+          <BrowserRouter
+            basename="/app">
+            <Switch>
+              <Route path="/editor" component={Editor} />
+              <Route path="/player" component={null} />
+              <Redirect from="/" to="/editor" />
+            </Switch>
+          </BrowserRouter>
+        </SaveCtx.Provider>
       </ProjectCtx.Provider>
     </React.Fragment>;
   }
