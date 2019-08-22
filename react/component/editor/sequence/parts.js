@@ -12,7 +12,9 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import DeleteIcon from "@material-ui/icons/Delete";
 import AddPart from "./dialog/addpart";
+import DeletePart from "./dialog/deletepart";
 
 /** Display all parts */
 class Parts extends React.Component {
@@ -21,6 +23,7 @@ class Parts extends React.Component {
     exState(this, {
       addDialog: false,
       redirectTo: null,
+      deleteConfirm: null,
     });
   }
 
@@ -68,6 +71,17 @@ class Parts extends React.Component {
     </IconButton>;
   }
 
+  handleDeletePart(id) {
+    this.updateState({deleteConfirm: id});
+  }
+
+  renderDeleteButton(id) {
+    return <IconButton
+      onClick={() => this.handleDeletePart(id)}>
+      <DeleteIcon />
+    </IconButton>;
+  }
+
   openPart(partId) {
     this.updateState({
       redirectTo: `/editor/sequence/part/${partId}`,
@@ -84,6 +98,7 @@ class Parts extends React.Component {
         <ListItemSecondaryAction>
           {this.renderMoveUpButton(id)}
           {this.renderMoveDownButton(id)}
+          {this.renderDeleteButton(id)}
         </ListItemSecondaryAction>
       </ListItem>;
     }
@@ -119,6 +134,28 @@ class Parts extends React.Component {
     return null;
   }
 
+  handleDeleteClose() {
+    this.updateState({
+      deleteConfirm: null,
+    });
+  }
+
+  handleDeleteConfirm() {
+    const partToDelete = this.state.deleteConfirm;
+    this.updateState({deleteConfirm: null})
+      .then(() => this.props.projectCtx.deletePart(partToDelete));
+  }
+
+  renderDeleteDialog() {
+    return <DeletePart
+      open={this.state.deleteConfirm !== null}
+      onClose={() => this.handleDeleteClose()}
+      onDelete={() => this.handleDeleteConfirm()}
+      partTitle={this.state.deleteConfirm !== null
+        ? this.props.projectCtx.getPartTitle(this.state.deleteConfirm)
+        : null} />;
+  }
+
   render() {
     if (!this.props.projectCtx.isOpen()) {
       return <Typography variant="body1">
@@ -129,6 +166,7 @@ class Parts extends React.Component {
       return <Redirect to={this.state.redirectTo} />;
     }
     return <React.Fragment>
+      {this.renderDeleteDialog()}
       {this.renderAddDialog()}
       {this.renderPartsList()}
       {this.renderPartEditor()}

@@ -154,6 +154,21 @@ export const movePart = (ctx, from, to) => {
   });
 };
 
+/** Delete a part.
+ * 
+ * Context bound.
+ * 
+ * @param {number} partId
+ * Part to remove
+ * 
+ * @return {Promise}
+ */
+export const deletePart = (ctx, partId) => {
+  const parts = ctx.parts.slice();
+  parts.splice(partId, 1);
+  return ctx.update({parts, saved: false});
+};
+
 /** Extract data from a part and return the useful fields
  * 
  * Always return copies, not reference to the context object itself.
@@ -207,4 +222,5 @@ export const contextFunctions = {
   newProject,
   savePartFromContext,
   saveProject,
+  deletePart,
 };
