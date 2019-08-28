@@ -23,6 +23,10 @@ export const notificationEnum = {
     id: Symbol("PARTSAVED"),
     label: "Current part saved",
   },
+  saveBeforePlay: {
+    id: Symbol("SAVEBEFOREPLAY"),
+    label: "You need to save before",
+  }
 };
 
 /** Show a notification based on its id.

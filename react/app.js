@@ -5,8 +5,11 @@ import {Redirect} from "react-router-dom";
 import {Switch} from "react-router-dom";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import Editor from "./component/editor/editor";
+import Player from "./component/player";
 import ProjectCtx from "./context/project";
 import SaveCtx from "./context/save";
+import NotificationList from "./component/editor/notificationlist";
+import NotificationCtx from "./context/notification";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,6 +17,7 @@ export default class App extends React.Component {
     exState(this, {});
     ProjectCtx.init(this);
     SaveCtx.init(this);
+    NotificationCtx.init(this);
     this.registerExitHandler();
   }
 
@@ -41,14 +45,17 @@ export default class App extends React.Component {
     return <React.Fragment>
       <ProjectCtx.Provider stateRef={this}>
         <SaveCtx.Provider stateRef={this}>
-          <BrowserRouter
-            basename="/app">
-            <Switch>
-              <Route path="/editor" component={Editor} />
-              <Route path="/player" component={null} />
-              <Redirect from="/" to="/editor" />
-            </Switch>
-          </BrowserRouter>
+          <NotificationCtx.Provider stateRef={this}>
+            <NotificationList />
+            <BrowserRouter
+              basename="/app">
+              <Switch>
+                <Route path="/editor" component={Editor} />
+                <Route path="/player" component={Player} />
+                <Redirect from="/" to="/editor" />
+              </Switch>
+            </BrowserRouter>
+          </NotificationCtx.Provider>
         </SaveCtx.Provider>
       </ProjectCtx.Provider>
     </React.Fragment>;

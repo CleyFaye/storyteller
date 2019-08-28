@@ -6,6 +6,7 @@ import SaveIcon from "@material-ui/icons/Save";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
+import PlayCircleOutline from "@material-ui/icons/PlayCircleOutline";
 import ProjectCtx from "../../context/project";
 import NotificationCtx from "../../context/notification";
 import SaveCtx from "../../context/save";
@@ -43,6 +44,11 @@ const openProjectEntries = [
     icon: SaveIcon,
     label: "Save",
     action: "save",
+  },
+  {
+    icon: PlayCircleOutline,
+    label: "Start player",
+    path: "/player",
   }
 ];
 
