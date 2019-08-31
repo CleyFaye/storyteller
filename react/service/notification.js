@@ -26,7 +26,11 @@ export const notificationEnum = {
   saveBeforePlay: {
     id: Symbol("SAVEBEFOREPLAY"),
     label: "You need to save before",
-  }
+  },
+  testPrint: {
+    id: Symbol("NOTIFICATIONENUM"),
+    label: "Test page sent to printer",
+  },
 };
 
 /** Show a notification based on its id.

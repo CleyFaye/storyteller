@@ -17,6 +17,7 @@ class Printer extends React.Component {
     super(props);
     exState(this, {
       printerName: "",
+      ghostscript: "",
       loading: true,
     });
     changeHandler(this);
@@ -32,6 +33,7 @@ class Printer extends React.Component {
     this.updateState({loading: true})
       .then(() => setAll({
         printerName: this.state.printerName,
+        ghostscript: this.state.ghostscript,
       }))
       .then(() => this.updateState({loading: false}));
   }
@@ -45,7 +47,7 @@ class Printer extends React.Component {
   }
 
   testPrinter() {
-    testPrint(this.state.printerName)
+    testPrint(this.state.ghostscript, this.state.printerName)
       .then(() => this.props.notificationCtx.show(
         notificationEnum.testPrint
       ))
@@ -66,6 +68,12 @@ class Printer extends React.Component {
           label="Printer name"
           value={this.state.printerName}
           onChange={this.changeHandler("printerName")}
+          fullWidth />
+        <TextField
+          variant="filled"
+          label="Ghostscript path (only for windows)"
+          value={this.state.ghostscript}
+          onChange={this.changeHandler("ghostscript")}
           fullWidth />
         <Button
           color="secondary"
