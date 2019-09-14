@@ -7,6 +7,7 @@ import DashboardIcon from "@material-ui/icons/Dashboard";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import PlayCircleOutline from "@material-ui/icons/PlayCircleOutline";
+import ImportExportIcon from "@material-ui/icons/ImportExport";
 import ProjectCtx from "../../context/project";
 import NotificationCtx from "../../context/notification";
 import SaveCtx from "../../context/save";
@@ -25,10 +26,17 @@ const loadProjectEntry = {
   path: "/editor/load",
 };
 
+const importProjectEntry = {
+  icon: ImportExportIcon,
+  label: "Import / export",
+  path: "/editor/filemanager",
+};
+
 /** List of options when no project are open */
 const noProjectEntries = [
   newProjectEntry,
   loadProjectEntry,
+  importProjectEntry,
 ];
 
 const openProjectEntries = [
@@ -40,6 +48,7 @@ const openProjectEntries = [
   "divider",
   newProjectEntry,
   loadProjectEntry,
+  importProjectEntry,
   {
     icon: SaveIcon,
     label: "Save",

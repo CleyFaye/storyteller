@@ -2,7 +2,7 @@
 const buildNewChapterPart = partDef => ({
   type: PartTypes.chapter.identifier,
   title: partDef.title,
-  variants: [],
+  variants: partDef.variants || [],
 });
 
 /** Duplicate content into a new object */

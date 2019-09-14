@@ -7,6 +7,7 @@ import New from "./new";
 import Sequence from "./sequence";
 import Load from "./load";
 import Setting from "./setting";
+import FileManager from "./filemanager";
 
 class EditorSwitch extends React.Component {
   render() {
@@ -16,6 +17,7 @@ class EditorSwitch extends React.Component {
       <Route path="/editor/sequence" component={Sequence} />
       <Route path="/editor/load" component={Load} />
       <Route path="/editor/settings" component={Setting} />
+      <Route path="/editor/filemanager" component={FileManager} />
       <Redirect to="/editor/welcome" />
     </Switch>;
   }
