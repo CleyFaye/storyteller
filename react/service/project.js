@@ -1,6 +1,7 @@
 import {listExisting as apiListExisting} from "../api/project";
 import {loadProject as apiLoadProject} from "../api/project";
 import {saveProject as apiSaveProject} from "../api/project";
+import {printStory} from "../api/printer";
 import {buildNew as buildNewPart} from "./project/part";
 import {loadIntoContext as loadPartIntoContextRaw} from "./project/part";
 import {saveFromContext as savePartFromContextRaw} from "./project/part";
@@ -218,6 +219,13 @@ export const getPartTitle = (ctx, partId) =>
 export const exportProject = ctx =>
   subExport(ctx);
 
+export const printVariant = (ctx, parameters) => {
+  const paragraphs = parameters.selections.map((variantId, chapterId) =>
+    ctx.parts[chapterId].variants[variantId]
+  );
+  return printStory(paragraphs);
+};
+
 export const contextFunctions = {
   addPart,
   getPartTitle,
@@ -233,4 +241,5 @@ export const contextFunctions = {
   saveProject,
   deletePart,
   exportProject,
+  printVariant,
 };

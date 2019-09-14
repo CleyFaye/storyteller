@@ -62,8 +62,18 @@ const cutLineToWidth = (line, width, font, size) => {
   return result;
 };
 
+const filterNewLinesInLines = lines => {
+  const result = [];
+  lines.forEach(line => {
+    const splittedLine = line.replace(/\r/g, "").split("\n");
+    splittedLine.forEach(cutLine => result.push(cutLine));
+  });
+  return result;
+};
+
 /** Return individual lines constrained to the given width */
 const cutLines = (lines, width, font, size) => {
+  lines = filterNewLinesInLines(lines);
   const splitLines = lines.map(line => cutLineToWidth(line, width, font, size));
   return splitLines.reduce((acc, cur) => {
     return acc.concat(cur);
@@ -87,8 +97,8 @@ export const makePDF = (paragraphs, outputPath) => {
       const workWidth = width - 2 * horizontalMargin;
       const workHeight = height - 2 * verticalMargin;
 
-      const fontSize = 20;
-      const lineHeight = timesRomanFont.heightAtSize(fontSize);
+      const fontSize = 14;
+      const lineHeight = timesRomanFont.heightAtSize(fontSize) * 1.15;
 
       const lines = cutLines(
         paragraphsToLines(paragraphs),

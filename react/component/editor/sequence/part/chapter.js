@@ -157,7 +157,7 @@ class Chapter extends React.Component {
 
   /** Render a single editor */
   renderVariantEditor(variantId) {
-    return <Paper className={this.props.classes.variantEditor}>
+    return <Paper key={variantId} className={this.props.classes.variantEditor}>
       <TextField
         variant="filled"
         multiline
@@ -184,7 +184,6 @@ class Chapter extends React.Component {
   }
 
   render() {
-    console.log("RENDER");
     if (this.state.partTitle === null) {
       return <span>Loading…</span>;
     }

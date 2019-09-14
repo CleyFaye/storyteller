@@ -12,5 +12,6 @@ updatelocal.bat
 
 # Server data files
 /data
+/outputs
 /settings.json
 /dummy.pdf

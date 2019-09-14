@@ -6,3 +6,8 @@ export const test = (binPath, printerName, duplex) =>
     printerName,
     duplex,
   });
+
+export const printStory = (paragraphs) =>
+  callAPI("post", "/api/v1/printer/printStory", {
+    paragraphs,
+  });

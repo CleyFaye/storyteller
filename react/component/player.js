@@ -4,31 +4,22 @@ import {Redirect} from "react-router-dom";
 import ProjectCtx from "../context/project";
 import NotificationCtx from "../context/notification";
 import {notificationEnum} from "../service/notification";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
+import Basic from "./player/basic";
 
 /** Display the story player */
 class Player extends React.Component {
-  constructor(props) {
-    super(props);
-    exState(this, {
-      redirect: null,
-    });
-  }
-
   componentDidMount() {
     if (this.props.projectCtx.needSave()) {
       this.props.notificationCtx.show(notificationEnum.saveBeforePlay);
-      this.updateState({redirect: "/editor"});
-    } else if (!this.props.projectCtx.isOpen()) {
-      this.updateState({redirect: "/editor"});
     }
   }
 
   render() {
-    if (this.state.redirect) {
-      return <Redirect to={this.state.redirect} />;
+    if (this.props.projectCtx.needSave()
+      || !this.props.projectCtx.isOpen()) {
+      return <Redirect to="/editor/welcome" />;
     }
-    return <div>Player</div>;
+    return <Basic />;
   }
 }
 Player.propTypes = {

@@ -1,0 +1,239 @@
+body, html, .player {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.player {
+  background-image: url(../img/bg.jpg);
+  background-size: 100% 100%;
+  transition: margin 1s ease;
+  margin-top: 0%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  &.hidden {
+    margin-top: 100%;
+  }
+
+  @media print {
+    display: none;
+  }
+
+  .randomStory {
+    display: none;
+  }
+
+  .generateButt {
+    clear: both;
+    background-image: url(../img/activate.png);
+    background-size: 100%;
+    width: 348px;
+    height: 87px;
+    margin-top: 50px;
+    display: inline-block;
+  }
+
+  .bigButt {
+    float: left;
+
+    .upButton, .downButton {
+      width: 99px;
+      height: 87px;
+      background-size: 100% 100%;
+    }
+    .upButton {
+      background-image: url(../img/up.png);
+      margin-bottom: 30px;
+    }
+    .downButton {
+      background-image: url(../img/down.png);
+      margin-top: 30px;
+    }
+    .digit {
+      width: 100px;
+      height: 100px;
+      margin-right: 40px;
+      border-radius: 100%;
+      border-color: black;
+      border-width: 1px;
+      border-style: solid;
+      overflow: hidden;
+      background-image: url(../img/rust.jpg);
+      background-attachment: fixed;
+
+      &:after {
+        animation-duration: 0.45s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        width: 300px;
+        height: 300px;
+        display: block;
+        content: "";
+        background-image: url(../img/cog.png);
+        background-size: 100%;
+        position: relative;
+        right: 215px;
+        bottom: 100px;
+      }
+
+      &.from-0-backward:after {
+        animation-name: from-9;
+        animation-direction: reverse;
+      }
+      &.fixed-0:after {
+        transform: rotate(0deg);
+      }
+      &.from-0-forward:after {
+        animation-name: from-0;
+        animation-direction: normal;
+      }
+      &.from-1-backward:after {
+        animation-name: from-0;
+        animation-direction: reverse;
+      }
+      &.fixed-1:after {
+        transform: rotate(36deg);
+      }
+      &.from-1-forward:after {
+        animation-name: from-1;
+        animation-direction: normal;
+      }
+      &.from-2-backward:after {
+        animation-name: from-1;
+        animation-direction: reverse;
+      }
+      &.fixed-2:after {
+        transform: rotate(72deg);
+      }
+      &.from-2-forward:after {
+        animation-name: from-2;
+        animation-direction: normal;
+      }
+      &.from-3-backward:after {
+        animation-name: from-2;
+        animation-direction: reverse;
+      }
+      &.fixed-3:after {
+        transform: rotate(108deg);
+      }
+      &.from-3-forward:after {
+        animation-name: from-3;
+        animation-direction: normal;
+      }
+      &.from-4-backward:after {
+        animation-name: from-3;
+        animation-direction: reverse;
+      }
+      &.fixed-4:after {
+        transform: rotate(144deg);
+      }
+      &.from-4-forward:after {
+        animation-name: from-4;
+        animation-direction: normal;
+      }
+      &.from-5-backward:after {
+        animation-name: from-4;
+        animation-direction: reverse;
+      }
+      &.fixed-5:after {
+        transform: rotate(180deg);
+      }
+      &.from-5-forward:after {
+        animation-name: from-5;
+        animation-direction: normal;
+      }
+      &.from-6-backward:after {
+        animation-name: from-5;
+        animation-direction: reverse;
+      }
+      &.fixed-6:after {
+        transform: rotate(216deg);
+      }
+      &.from-6-forward:after {
+        animation-name: from-6;
+        animation-direction: normal;
+      }
+      &.from-7-backward:after {
+        animation-name: from-6;
+        animation-direction: reverse;
+      }
+      &.fixed-7:after {
+        transform: rotate(252deg);
+      }
+      &.from-7-forward:after {
+        animation-name: from-7;
+        animation-direction: normal;
+      }
+      &.from-8-backward:after {
+        animation-name: from-7;
+        animation-direction: reverse;
+      }
+      &.fixed-8:after {
+        transform: rotate(288deg);
+      }
+      &.from-8-forward:after {
+        animation-name: from-8;
+        animation-direction: normal;
+      }
+      &.from-9-backward:after {
+        animation-name: from-8;
+        animation-direction: reverse;
+      }
+      &.fixed-9:after {
+        transform: rotate(324deg);
+      }
+      &.from-9-forward:after {
+        animation-name: from-9;
+        animation-direction: normal;
+      }
+    }
+  }
+}
+
+@keyframes from-0 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(36deg);
+  }
+}
+@keyframes from-1 {
+  from { transform: rotate(36deg); }
+  to { transform: rotate(72deg); }
+}
+@keyframes from-2 {
+  from { transform: rotate(72deg); }
+  to { transform: rotate(108deg); }
+}
+@keyframes from-3 {
+  from { transform: rotate(108deg); }
+  to { transform: rotate(144deg); }
+}
+@keyframes from-4 {
+  from { transform: rotate(144deg); }
+  to { transform: rotate(180deg); }
+}
+@keyframes from-5 {
+  from { transform: rotate(180deg); }
+  to { transform: rotate(216deg); }
+}
+@keyframes from-6 {
+  from { transform: rotate(216deg); }
+  to { transform: rotate(252deg); }
+}
+@keyframes from-7 {
+  from { transform: rotate(252deg); }
+  to { transform: rotate(288deg); }
+}
+@keyframes from-8 {
+  from {transform: rotate(288deg); }
+  to { transform: rotate(324deg); }
+}
+@keyframes from-9 {
+  from {transform: rotate(324deg); }
+  to {transform: rotate(360deg); }
+}

@@ -2,6 +2,8 @@ import os from "os";
 import {pathExists} from "fs-extra";
 import {spawn} from "child_process";
 import {makePDF} from "./pdf";
+import {getAll} from "./setting";
+import {ensureDir} from "fs-extra";
 
 const dummyPDFPath = "dummy.pdf";
 
@@ -82,3 +84,20 @@ export const test = (binPath, printerName, duplex) => Promise.resolve()
     return printPDF(binPath, pdfPath, printerName, duplex);
   })
   );
+
+const outputPath = "outputs";
+
+export const printStory = paragraphs => {
+  const timestamp = new Date().toISOString().replace(/:/g,"_");
+  const pdfName = `outputs/${timestamp}.pdf`;
+  return ensureDir(outputPath)
+    .then(() => Promise.all([
+      getAll(),
+      makePDF(paragraphs, pdfName),
+    ])).then(([settings]) => printPDF(
+      settings.binPath,
+      pdfName,
+      settings.printerName,
+      settings.duplex
+    ));
+};
