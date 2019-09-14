@@ -6,6 +6,8 @@ import {loadIntoContext as loadPartIntoContextRaw} from "./project/part";
 import {saveFromContext as savePartFromContextRaw} from "./project/part";
 import {isDifferent as isPartDifferentRaw} from "./project/part";
 import {getTitle as getPartTitleRaw} from "./project/part";
+import {exportPart as partExportPart} from "./project/part";
+import {exportProject as subExport} from "./project/export";
 
 /** Start a new project.
  * 
@@ -204,16 +206,23 @@ export const savePartFromContext = (ctx, partId, contextData) => {
   });
 };
 
+export const exportPart = (ctx, partId) =>
+  partExportPart(ctx.parts[partId]);
+
 export const isPartDifferent = (ctx, partId, contextData) =>
   isPartDifferentRaw(ctx.parts[partId], contextData);
 
 export const getPartTitle = (ctx, partId) =>
   getPartTitleRaw(ctx.parts[partId]);
 
+export const exportProject = ctx =>
+  subExport(ctx);
+
 export const contextFunctions = {
   addPart,
   getPartTitle,
   isOpen,
+  exportPart,
   isPartDifferent,
   loadPartIntoContext,
   loadProject,
@@ -223,4 +232,5 @@ export const contextFunctions = {
   savePartFromContext,
   saveProject,
   deletePart,
+  exportProject,
 };

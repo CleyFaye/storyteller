@@ -9,6 +9,7 @@ import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
 import Import from "./filemanager/import";
 import Export from "./filemanager/export";
+import ProjectCtx from "../../context/project";
 
 class FileManagerPanel extends React.Component {
   render() {
@@ -35,6 +36,15 @@ class FileManager extends React.Component {
     changeHandler(this);
   }
 
+  renderExportPanel() {
+    if (this.props.projectCtx.isOpen()) {
+      return <Export />;
+    }
+    return <Typography variant="h4">
+      No project open.
+    </Typography>;
+  }
+
   render() {
     return <React.Fragment>
       <AppBar position="static">
@@ -49,12 +59,13 @@ class FileManager extends React.Component {
         <Import />
       </FileManagerPanel>
       <FileManagerPanel value={this.state.value} index={1}>
-        <Export />
+        {this.renderExportPanel()}
       </FileManagerPanel>
     </React.Fragment>;
   }
 }
 FileManager.propTypes = {
+  projectCtx: PropTypes.object,
 };
 
-export default FileManager;
+export default ProjectCtx.withCtx(FileManager);

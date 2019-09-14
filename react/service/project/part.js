@@ -34,6 +34,12 @@ const isChapterDifferent = (partData, contextData) => {
   return false;
 };
 
+const exportChapter = partData => ({
+  title: partData.title,
+  type: partData.type,
+  variants: partData.variants,
+});
+
 const getChapterTitle = partData =>
   `${partData.title} (${partData.variants.length} `
   + `variant${partData.variants.length > 1 ? "s" : ""})`;
@@ -50,6 +56,9 @@ export const PartTypes = {
     loadIntoContext: loadChapterIntoContext,
     // Update a part using data from an editor context
     saveFromContext: saveChapterFromContext,
+    // Export a JSON-serializable object that can be provided to recreate the
+    // part.
+    export: exportChapter,
     // Check if a context state is different from the stored part (=if it need
     // to be saved)
     isDifferent: isChapterDifferent,
@@ -87,9 +96,18 @@ export const saveFromContext = contextData => {
   return partTypeDef.saveFromContext(contextData);
 };
 
+/** Return a serializable object, suitable to recreate the part later
+ * 
+ * @param {Object} part
+ * 
+ * @return {Object}
+ */
+export const exportPart = part =>
+  getPartType(part.type).export(part);
+
 /** Determine if an editor context need to be saved
  * 
- * @param {Object} partData
+ * @param {Object} part
  * Part from the projectCtx
  * 
  * @param {Object} contextData

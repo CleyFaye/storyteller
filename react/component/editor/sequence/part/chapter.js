@@ -161,6 +161,7 @@ class Chapter extends React.Component {
       <TextField
         variant="filled"
         multiline
+        fullWidth
         label={`Variant ${variantId}`}
         value={this.state.partVariants[variantId]}
         onChange={e => this.updateVariant(variantId, e.target.value)} />
