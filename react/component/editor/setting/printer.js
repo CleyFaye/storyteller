@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
 import NotificationCtx from "../../../context/notification";
@@ -17,7 +19,8 @@ class Printer extends React.Component {
     super(props);
     exState(this, {
       printerName: "",
-      ghostscript: "",
+      binPath: "",
+      duplex: true,
       loading: true,
     });
     changeHandler(this);
@@ -33,7 +36,7 @@ class Printer extends React.Component {
     this.updateState({loading: true})
       .then(() => setAll({
         printerName: this.state.printerName,
-        ghostscript: this.state.ghostscript,
+        binPath: this.state.binPath,
       }))
       .then(() => this.updateState({loading: false}));
   }
@@ -47,7 +50,7 @@ class Printer extends React.Component {
   }
 
   testPrinter() {
-    testPrint(this.state.ghostscript, this.state.printerName)
+    testPrint(this.state.binPath, this.state.printerName, this.state.duplex)
       .then(() => this.props.notificationCtx.show(
         notificationEnum.testPrint
       ))
@@ -71,10 +74,21 @@ class Printer extends React.Component {
           fullWidth />
         <TextField
           variant="filled"
-          label="Ghostscript path (only for windows)"
-          value={this.state.ghostscript}
-          onChange={this.changeHandler("ghostscript")}
+          label="Ghostscript path (windows) or lp path (unix-like)"
+          value={this.state.binPath}
+          onChange={this.changeHandler("binPath")}
           fullWidth />
+        <br />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={this.state.duplex}
+              onChange={this.changeCheckboxHandler("duplex")}
+              color="primary" />
+          }
+          label="Two-sided printing (linux only)"
+        />
+        <br />
         <Button
           color="secondary"
           disabled={this.state.printerName.length == 0}

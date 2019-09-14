@@ -5,8 +5,9 @@ import {test as testPrinter} from "../../../service/printer";
 const router = express.Router();
 
 const test = req => testPrinter(
-  req.body.ghostscript,
-  req.body.printerName);
+  req.body.binPath,
+  req.body.printerName,
+  req.body.duplex);
 
 router.post("/test", APIHandler(test));
 

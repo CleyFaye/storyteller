@@ -1,4 +1,4 @@
 import {test as testPrint} from "../api/printer";
 
-export const test = (ghostscript, printerName) =>
-  testPrint(ghostscript, printerName);
+export const test = (binPath, printerName, duplex) =>
+  testPrint(binPath, printerName, duplex);

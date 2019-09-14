@@ -8,7 +8,8 @@ const loadConfig = () => readJSON(configPath)
   .then(fileConfig => Object.assign(
     {
       printerName: "",
-      ghostscript: "",
+      binPath: "",
+      duplex: true,
     },
     fileConfig
   ));

@@ -25,27 +25,36 @@ const getTestPDF = () => pathExists(dummyPDFPath)
     return makeTestPDF().then(() => dummyPDFPath);
   });
 
-const printPDF = (gsPath, pdfPath, printerName) => new Promise(
+const ghostscriptArgs = (printerName, duplex, pdfPath) => ([
+  "-sDEVICE=mswinpr2",
+  "-dBATCH",
+  "-dNOPAUSE",
+  "-dNoCancel",
+  `-sOutputFile=%printer%${printerName}`,
+  pdfPath,
+]);
+
+const lpArgs = (printerName, duplex, pdfPath) => {
+  const res = [
+    "-d",
+    printerName,
+  ];
+  if (duplex) {
+    res.push("-o");
+    res.push("sides=two-sided-long-edge");
+  }
+  res.push(pdfPath);
+  return res;
+};
+
+const printPDF = (binPath, pdfPath, printerName, duplex) => new Promise(
   (resolve, reject) => {
-    const processToSpawn = os.platform() == "win32"
-      ? {
-        bin: gsPath,
-        args: [
-          "-sDEVICE=mswinpr2",
-          "-dBATCH",
-          "-dNOPAUSE",
-          `-sOutputFile=%printer%${printerName}`,
-          pdfPath
-        ]
-      }
-      : {
-        bin: "lp",
-        args: [
-          `-d ${printerName}`,
-          pdfPath,
-        ]
-      };
-    console.log(processToSpawn);
+    const processToSpawn = {
+      bin: binPath,
+      args: os.platform() == "win32"
+        ? ghostscriptArgs(printerName, duplex, pdfPath)
+        : lpArgs(printerName, duplex, pdfPath),
+    };
     const process = spawn(processToSpawn.bin, processToSpawn.args);
     process.stdout.on("data", data => console.log(`[out] print: ${data}`));
     process.stderr.on("data", data => console.log(`[err] print: ${data}`));
@@ -59,7 +68,7 @@ const printPDF = (gsPath, pdfPath, printerName) => new Promise(
   }
 );
 
-export const test = (ghostscript, printerName) => Promise.resolve()
+export const test = (binPath, printerName, duplex) => Promise.resolve()
   .then(() => Promise.all([
     new Promise(resolve => {
       if (!printerName) {
@@ -67,9 +76,9 @@ export const test = (ghostscript, printerName) => Promise.resolve()
       }
       resolve(printerName);
     }),
-    ghostscript,
+    binPath,
     getTestPDF(),
-  ]).then(([printerName, gsPath, pdfPath]) => {
-    return printPDF(gsPath, pdfPath, printerName);
+  ]).then(([printerName, binPath, pdfPath]) => {
+    return printPDF(binPath, pdfPath, printerName, duplex);
   })
   );

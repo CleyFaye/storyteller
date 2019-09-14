@@ -1,7 +1,8 @@
 import {callAPI} from "./util";
 
-export const test = (ghostscript, printerName) =>
+export const test = (binPath, printerName, duplex) =>
   callAPI("post", "/api/v1/printer/test", {
-    ghostscript,
+    binPath,
     printerName,
+    duplex,
   });
