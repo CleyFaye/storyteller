@@ -4,3 +4,6 @@
 - Always regenerate test page (in accordance to font settings while we're at it)
 - Customizable player: scaling, element "theme"
 - Real randomization: have different amount of dials in the player, use a predictive prng to get effective paragraph variants
+- Support in-app update button
+- Auto-ping server from webpage, kill server when no more ping
+- Start browser in kiosk mode (might need an external script for that)
