@@ -128,5 +128,5 @@ export const list = () => {
     const output = execSync("/usr/bin/lpstat -a", {encoding: "utf-8"});
     const names = output.split("\n").map(line => line.split(" ")[0]);
     resolve(names);
-  });
+  }).catch(() => []);
 };
