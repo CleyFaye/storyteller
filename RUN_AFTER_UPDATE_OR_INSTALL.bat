@@ -1,2 +1,2 @@
-npm install
-npx grunt clean build
+call npm install
+call npx grunt clean build
