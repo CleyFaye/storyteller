@@ -13,6 +13,7 @@ import {notificationEnum} from "../../../service/notification";
 import {getAll} from "../../../service/setting";
 import {setAll} from "../../../service/setting";
 import {test as testPrint} from "../../../service/printer";
+import {list as listPrinters} from "../../../service/printer";
 
 class Printer extends React.Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class Printer extends React.Component {
       binPath: "",
       duplex: true,
       loading: true,
+      printers: null,
     });
     changeHandler(this);
   }
@@ -29,7 +31,11 @@ class Printer extends React.Component {
   componentDidMount() {
     getAll()
       .then(remoteConfig => this.updateState(remoteConfig))
-      .then(() => this.updateState({loading: false}));
+      .then(() => listPrinters())
+      .then(printers => this.updateState({
+        loading: false,
+        printers,
+      }));
   }
 
   handleSave() {
@@ -59,6 +65,24 @@ class Printer extends React.Component {
       ));
   }
 
+  renderPrinterList() {
+    if (this.state.printers === null) {
+      return;
+    }
+    return <React.Fragment>
+      <br />
+      {this.state.printers.map(printerName => 
+        <Button
+          key={printerName}
+          color="secondary"
+          onClick={() => this.updateState({printerName})}>
+          {printerName}
+        </Button>
+      )}
+      <br />
+    </React.Fragment>;
+  }
+
   render() {
     if (this.state.loading) {
       return <Typography variant="h4">Loading…</Typography>;
@@ -72,6 +96,7 @@ class Printer extends React.Component {
           value={this.state.printerName}
           onChange={this.changeHandler("printerName")}
           fullWidth />
+        {this.renderPrinterList()}
         <TextField
           variant="filled"
           label="Ghostscript path (windows) or lp path (unix-like)"

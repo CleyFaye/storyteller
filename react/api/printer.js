@@ -11,3 +11,6 @@ export const printStory = (paragraphs) =>
   callAPI("post", "/api/v1/printer/printStory", {
     paragraphs,
   });
+
+export const list = () =>
+  callAPI("post", "/api/v1/printer/list");

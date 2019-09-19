@@ -1,6 +1,7 @@
 import os from "os";
 import {pathExists} from "fs-extra";
 import {spawn} from "child_process";
+import {execSync} from "child_process";
 import {makePDF} from "./pdf";
 import {getAll} from "./setting";
 import {ensureDir} from "fs-extra";
@@ -100,4 +101,32 @@ export const printStory = paragraphs => {
       settings.printerName,
       settings.duplex
     ));
+};
+
+export const list = () => {
+  if (os.platform() == "win32") {
+    return new Promise(resolve => {
+      const output = execSync("wmic printer list brief", {encoding: "utf-8"});
+      console.log("oputput=", output);
+      const lines = output.split("\n");
+      const namePos = lines[0].indexOf("Name");
+      const statePos = lines[0].indexOf("PrinterState");
+      console.log("pos=", namePos);
+      const names = lines.slice(1).map(line => {
+        const sub = line.substring(namePos, statePos);
+        const res = sub.trim();
+        console.log(res);
+        return res;
+      });
+      resolve(names);
+    }).catch(e => {
+      console.error(e);
+      return [];
+    });
+  }
+  return new Promise(resolve => {
+    const output = execSync("/usr/bin/lpstat -a", {encoding: "utf-8"});
+    const names = output.split("\n").map(line => line.split(" ")[0]);
+    resolve(names);
+  });
 };
