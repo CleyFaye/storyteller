@@ -1,0 +1,6 @@
+- Customizable font (font face, font type, font size)
+- Justify text
+- Check how paragraphs are split, maybe I broke something
+- Always regenerate test page (in accordance to font settings while we're at it)
+- Customizable player: scaling, element "theme"
+- Real randomization: have different amount of dials in the player, use a predictive prng to get effective paragraph variants
