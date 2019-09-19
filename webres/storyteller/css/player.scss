@@ -30,9 +30,9 @@ body, html, .player {
     clear: both;
     background-image: url(../img/activate.png);
     background-size: 100%;
-    width: 348px;
-    height: 87px;
-    margin-top: 50px;
+    width: calc(348px / 2);
+    height: calc(87px / 2);
+    margin-top: calc(50px / 2);
     display: inline-block;
   }
 
@@ -40,22 +40,22 @@ body, html, .player {
     float: left;
 
     .upButton, .downButton {
-      width: 99px;
-      height: 87px;
+      width: calc(99px / 2);
+      height: calc(87px / 2);
       background-size: 100% 100%;
     }
     .upButton {
       background-image: url(../img/up.png);
-      margin-bottom: 30px;
+      margin-bottom: calc(30px / 2);
     }
     .downButton {
       background-image: url(../img/down.png);
-      margin-top: 30px;
+      margin-top: calc(30px / 2);
     }
     .digit {
-      width: 100px;
-      height: 100px;
-      margin-right: 40px;
+      width: calc(100px / 2);
+      height: calc(100px / 2);
+      margin-right: calc(40px / 2);
       border-radius: 100%;
       border-color: black;
       border-width: 1px;
@@ -68,15 +68,15 @@ body, html, .player {
         animation-duration: 0.45s;
         animation-iteration-count: 1;
         animation-fill-mode: forwards;
-        width: 300px;
-        height: 300px;
+        width: calc(300px / 2);
+        height: calc(300px / 2);
         display: block;
         content: "";
         background-image: url(../img/cog.png);
         background-size: 100%;
         position: relative;
-        right: 215px;
-        bottom: 100px;
+        right: calc(215px / 2); 
+        bottom: calc(100px / 2);
       }
 
       &.from-0-backward:after {
