@@ -1,3 +1,7 @@
+:root {
+  --ui-scale: 2;
+}
+
 body, html, .player {
   width: 100vw;
   height: 100vh;
@@ -5,7 +9,7 @@ body, html, .player {
 }
 
 .player {
-  background-image: url(../img/bg.jpg);
+  background-image: url(./img/bg.jpg);
   background-size: 100% 100%;
   transition: margin 1s ease;
   margin-top: 0%;
@@ -28,11 +32,11 @@ body, html, .player {
 
   .generateButt {
     clear: both;
-    background-image: url(../img/activate.png);
+    background-image: url(./img/activate.png);
     background-size: 100%;
-    width: calc(348px / 2);
-    height: calc(87px / 2);
-    margin-top: calc(50px / 2);
+    width: calc(348px / var(--ui-scale));
+    height: calc(87px / var(--ui-scale));
+    margin-top: calc(50px / var(--ui-scale));
     display: inline-block;
   }
 
@@ -40,43 +44,43 @@ body, html, .player {
     float: left;
 
     .upButton, .downButton {
-      width: calc(99px / 2);
-      height: calc(87px / 2);
+      width: calc(99px / var(--ui-scale));
+      height: calc(87px / var(--ui-scale));
       background-size: 100% 100%;
     }
     .upButton {
-      background-image: url(../img/up.png);
-      margin-bottom: calc(30px / 2);
+      background-image: url(./img/up.png);
+      margin-bottom: calc(30px / var(--ui-scale));
     }
     .downButton {
-      background-image: url(../img/down.png);
-      margin-top: calc(30px / 2);
+      background-image: url(./img/down.png);
+      margin-top: calc(30px / var(--ui-scale));
     }
     .digit {
-      width: calc(100px / 2);
-      height: calc(100px / 2);
-      margin-right: calc(40px / 2);
+      width: calc(100px / var(--ui-scale));
+      height: calc(100px / var(--ui-scale));
+      margin-right: calc(40px / var(--ui-scale));
       border-radius: 100%;
       border-color: black;
       border-width: 1px;
       border-style: solid;
       overflow: hidden;
-      background-image: url(../img/rust.jpg);
+      background-image: url(./img/rust.jpg);
       background-attachment: fixed;
 
       &:after {
         animation-duration: 0.45s;
         animation-iteration-count: 1;
         animation-fill-mode: forwards;
-        width: calc(300px / 2);
-        height: calc(300px / 2);
+        width: calc(300px / var(--ui-scale));
+        height: calc(300px / var(--ui-scale));
         display: block;
         content: "";
-        background-image: url(../img/cog.png);
+        background-image: url(./img/cog.png);
         background-size: 100%;
         position: relative;
-        right: calc(215px / 2); 
-        bottom: calc(100px / 2);
+        right: calc(215px / var(--ui-scale)); 
+        bottom: calc(100px / var(--ui-scale));
       }
 
       &.from-0-backward:after {

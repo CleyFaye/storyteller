@@ -8,6 +8,7 @@ import Box from "@material-ui/core/Box";
 import exState from "@cley_faye/react-utils/lib/mixin/exstate";
 import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
 import Printer from "./setting/printer";
+import Theme from "./setting/theme";
 
 class SettingPanel extends React.Component {
   render() {
@@ -41,6 +42,7 @@ class Setting extends React.Component {
           value={this.state.value}
           onChange={(_, value) => this.updateState({value})}>
           <Tab label="Printer" />
+          <Tab label="Theme" />
           <Tab label="Updates" />
         </Tabs>
       </AppBar>
@@ -48,7 +50,10 @@ class Setting extends React.Component {
         <Printer />
       </SettingPanel>
       <SettingPanel value={this.state.value} index={1}>
-      Update page
+        <Theme />
+      </SettingPanel>
+      <SettingPanel value={this.state.value} index={2}>
+        Update page (yeah still not done)
       </SettingPanel>
     </React.Fragment>;
   }

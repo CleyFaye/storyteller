@@ -10,11 +10,19 @@ const loadConfig = () => readJSON(configPath)
       printerName: "",
       binPath: "",
       duplex: true,
+      theme: "steamy",
+      uiScale: 20,
     },
     fileConfig
   ));
 
-const saveConfig = settings => writeJSON(configPath, settings);
+const saveConfig = settings => loadConfig()
+  .then(
+    initialConfig => Object.assign(
+      initialConfig,
+      settings
+    )
+  ).then(finalConfig => writeJSON(configPath, finalConfig));
 
 export const getAll = () => loadConfig();
 export const setAll = settings => saveConfig(settings);
