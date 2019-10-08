@@ -71,9 +71,9 @@ class Printer extends React.Component {
     }
     return <React.Fragment>
       <br />
-      {this.state.printers.map(printerName => 
+      {this.state.printers.map((printerName, id) => 
         <Button
-          key={printerName}
+          key={id}
           color="secondary"
           onClick={() => this.updateState({printerName})}>
           {printerName}

@@ -1,1 +1,1 @@
-export const list = () => Promise.resolve(["steamy"]);
+export const list = () => Promise.resolve(["steamy", "tdn"]);
