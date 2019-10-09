@@ -20,13 +20,7 @@ const makeTestPDF = () => makePDF([
 dummyPDFPath);
 
 /** Return the path to the test PDF */
-const getTestPDF = () => pathExists(dummyPDFPath)
-  .then(exists => {
-    if (exists) {
-      return dummyPDFPath;
-    }
-    return makeTestPDF().then(() => dummyPDFPath);
-  });
+const getTestPDF = () => makeTestPDF().then(() => dummyPDFPath);
 
 const ghostscriptArgs = (printerName, duplex, pdfPath) => ([
   "-sDEVICE=mswinpr2",

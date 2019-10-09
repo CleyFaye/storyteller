@@ -3,6 +3,7 @@ import {PDFDocument} from "pdf-lib";
 import {StandardFonts} from "pdf-lib";
 import {PageSizes} from "pdf-lib";
 import {rgb} from "pdf-lib";
+import {getAll} from "./setting";
 
 const pointToIn = value => value / 72;
 const inToMM = value => value * 25.4;
@@ -80,13 +81,64 @@ const cutLines = (lines, width, font, size) => {
   }, []);
 };
 
+const getFontRealName = (font, bold, italic) => {
+  switch (font) {
+  case "Courier":
+    if (bold && italic) {
+      return StandardFonts.CourierBoldOblique;
+    }
+    if (bold) {
+      return StandardFonts.CourierBold;
+    }
+    if (italic) {
+      return StandardFonts.CourierOblique;
+    }
+    return StandardFonts.Courier;
+  case "Helvetica":
+    if (bold && italic) {
+      return StandardFonts.HelveticaBoldOblique;
+    }
+    if (bold) {
+      return StandardFonts.HelveticaBold;
+    }
+    if (italic) {
+      return StandardFonts.HelveticaOblique;
+    }
+    return StandardFonts.Helvetica;
+  case "TimesRoman":
+    if (bold && italic) {
+      return StandardFonts.TimesRomanBoldItalic;
+    }
+    if (bold) {
+      return StandardFonts.TimesRomanBold;
+    }
+    if (italic) {
+      return StandardFonts.TimesRomanItalic;
+    }
+  }
+  return StandardFonts.TimesRoman;
+};
+
+const getFontFromSettings = () => getAll()
+  .then(({pdfFont, pdfFontBold, pdfFontItalic, pdfFontSize}) => {
+    let finalNameRef = getFontRealName(pdfFont, pdfFontBold, pdfFontItalic);
+    return {
+      name: finalNameRef,
+      size: pdfFontSize,      
+    };
+  });
+
 export const makePDF = (paragraphs, outputPath) => {
   let pdfDoc;
-  let timesRomanFont;
+  let fontObj;
+  let fontSize;
   return PDFDocument.create()
     .then(res => pdfDoc = res)
-    .then(() => pdfDoc.embedFont(StandardFonts.TimesRoman))
-    .then(res => timesRomanFont = res)
+    .then(() => getFontFromSettings())
+    .then(({name, size}) => {
+      fontSize = size;
+      return pdfDoc.embedFont(name);
+    }).then(res => fontObj = res)
     .then(() => {
       let yOffset = 0;
       let currentPage = pdfDoc.addPage(PageSizes.A4);
@@ -97,13 +149,12 @@ export const makePDF = (paragraphs, outputPath) => {
       const workWidth = width - 2 * horizontalMargin;
       const workHeight = height - 2 * verticalMargin;
 
-      const fontSize = 14;
-      const lineHeight = timesRomanFont.heightAtSize(fontSize) * 1.15;
+      const lineHeight = fontObj.heightAtSize(fontSize) * 1.15;
 
       const lines = cutLines(
         paragraphsToLines(paragraphs),
         workWidth,
-        timesRomanFont,
+        fontObj,
         fontSize);
 
       lines.forEach(line => {
@@ -116,7 +167,7 @@ export const makePDF = (paragraphs, outputPath) => {
           x: horizontalMargin,
           y: workHeight + verticalMargin - yOffset,
           size: fontSize,
-          font: timesRomanFont,
+          font: fontObj,
           color: rgb(0, 0, 0),
         });
         yOffset += lineHeight;

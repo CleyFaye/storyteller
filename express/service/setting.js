@@ -12,6 +12,10 @@ const loadConfig = () => readJSON(configPath)
       duplex: true,
       theme: "steamy",
       uiScale: 20,
+      pdfFont: "TimesRoman",
+      pdfFontBold: false,
+      pdfFontItalic: false,
+      pdfFontSize: 14,
     },
     fileConfig
   ));
