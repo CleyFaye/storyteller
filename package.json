@@ -1,6 +1,6 @@
 {
   "name": "@cley_faye/storyteller",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create seemingly random stories from masterfully written parts",
   "main": "main.js",
   "directories": {
