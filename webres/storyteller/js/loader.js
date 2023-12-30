@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import App from "../../../react/app";
+import AppSwitch from "../../../react/appswitch";
 
 ReactDOM.render(
   <CssBaseline>
-    <App />
+    <AppSwitch />
   </CssBaseline>,
   document.querySelector(".app")
 );

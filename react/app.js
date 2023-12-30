@@ -48,7 +48,7 @@ export default class App extends React.Component {
           <NotificationCtx.Provider stateRef={this}>
             <NotificationList />
             <BrowserRouter
-              basename="/app">
+              basename="/app/story">
               <Switch>
                 <Route path="/editor" component={Editor} />
                 <Route path="/player" component={Player} />
