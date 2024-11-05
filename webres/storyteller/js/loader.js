@@ -1,7 +1,8 @@
+import CssBaseline from "@material-ui/core/CssBaseline";
 import React from "react";
 import ReactDOM from "react-dom";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import AppSwitch from "../../../react/appswitch";
+
+import AppSwitch from "../../../src/webapp/appswitch";
 
 ReactDOM.render(
   <CssBaseline>

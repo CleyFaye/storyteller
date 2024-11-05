@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require("esm")(module)("./express/server");
+import("./src/server/server");
