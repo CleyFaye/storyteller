@@ -1,4 +1,5 @@
-import {writeFile} from "fs-extra";
+import {writeFile} from "node:fs/promises";
+
 import {PDFDocument, StandardFonts, PageSizes, rgb} from "pdf-lib";
 
 import {getAll} from "./setting.js";

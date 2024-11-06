@@ -1,4 +1,4 @@
-import {readJSON, writeJSON} from "fs-extra";
+import {readJSON, writeJSON} from "./io.js";
 
 const configPath = "./settings.json";
 

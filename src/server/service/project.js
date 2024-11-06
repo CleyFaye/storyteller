@@ -1,9 +1,10 @@
 import {createHash} from "node:crypto";
+import {existsSync} from "node:fs";
 import {join} from "node:path";
 
-import {readJSON, writeJSON, ensureDir, pathExists} from "fs-extra";
-
 import {APIError, errorCodes} from "../util/api.js";
+
+import {ensureDir, readJSON, writeJSON} from "./io.js";
 
 const dataPath = "data";
 const listingFile = "listing.json";
@@ -24,9 +25,9 @@ const prepareDataDir = () => ensureDir(dataPath);
  * @return {Promise<string[]>}
  */
 const getDB = async () => {
-  const listingExist = await pathExists(listingFilePath);
+  const listingExist = existsSync(listingFilePath);
   if (!listingExist) return [];
-  return readJSON(listingFilePath);
+  return await readJSON(listingFilePath);
 };
 
 /** Add a project to the DB (if not already present) */
@@ -45,11 +46,11 @@ export const listExisting = () => getDB();
 /** Open data for an existing project */
 export const loadProject = async (projectName) => {
   const filename = getFilenameForProject(projectName);
-  const fileExist = await pathExists(filename);
+  const fileExist = existsSync(filename);
   if (!fileExist) {
     throw APIError(errorCodes.PROJECT_ENOENT, "Project file not found");
   }
-  return readJSON(filename);
+  return await readJSON(filename);
 };
 
 /** Save data for a project */

@@ -1,7 +1,4 @@
 /* eslint-disable no-console */
-import * as fs from "node:fs";
-
-import program from "commander";
 import express from "express";
 
 import openURL from "open";
@@ -10,9 +7,21 @@ import routes from "./route/index.js";
 
 import {setRef} from "./util/close.js";
 
-const pkg = JSON.parse(fs.readFileSync("package.json"));
+const showHelp = () => {
+  console.log(
+    `
+Usage:
 
-const main = ({port, open}) => {
+  npm start [--port <port>] [--no-open]
+`.trim(),
+  );
+};
+
+const main = ({help, noOpen, port}) => {
+  if (help) {
+    showHelp();
+    return;
+  }
   const app = express();
 
   app.use(express.json());
@@ -40,14 +49,14 @@ const main = ({port, open}) => {
     const activePort = server.address().port;
     const url = `http://localhost:${activePort}/app`;
     console.log("Server started");
-    if (open) {
+    if (noOpen) {
+      console.log("You can open the interface by following this URL:");
+    } else {
       console.log("A browser should have been opened to display the user interface.");
       console.log(
         "If that's not the case, or you want to open a new window, use the following URL:",
       );
       openURL(url);
-    } else {
-      console.log("You can open the interface by following this URL:");
     }
     console.log("");
     console.log(`    ${url}`);
@@ -55,15 +64,30 @@ const main = ({port, open}) => {
   });
 };
 
+const eatCli = (index, isBoolean) => {
+  if (isBoolean) {
+    process.argv.splice(index, 1);
+    return true;
+  }
+  // eslint-disable-next-line no-magic-numbers
+  const [, result] = process.argv.splice(index, 2);
+  return result;
+};
+
+const consumeCli = (short, long, isBoolean) => {
+  const shortIndex = process.argv.indexOf(short);
+  if (shortIndex !== -1) return eatCli(shortIndex, isBoolean);
+  const longIndex = process.argv.indexOf(long);
+  if (longIndex !== -1) return eatCli(longIndex, isBoolean);
+  return isBoolean ? false : undefined;
+};
+
 /** Parse command line arguments and pass them to the application. */
 const parseCLI = () => {
-  program.name("start");
-  program.version(pkg.version);
-  program.description(pkg.description);
-  program.option("-p, --port <port>", "Select listening port", 0);
-  program.option("-n, --no-open", "Don't try to open a browser window");
-  program.parse(process.argv);
-  return program;
+  const port = consumeCli("-p", "--port", false);
+  const noOpen = consumeCli("-n", "--no-open", true);
+  const help = consumeCli("-h", "--help");
+  return {help, noOpen, port};
 };
 
 main(parseCLI());

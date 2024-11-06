@@ -43,7 +43,7 @@ export default class App extends React.PureComponent {
         <SaveCtx.Provider stateRef={this}>
           <NotificationCtx.Provider stateRef={this}>
             <NotificationList />
-            <BrowserRouter basename="/app/story">
+            <BrowserRouter basename="/story">
               <Switch>
                 <Route component={Editor} path="/editor" />
                 <Route component={Player} path="/player" />

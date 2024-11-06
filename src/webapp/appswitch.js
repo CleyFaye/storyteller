@@ -8,7 +8,6 @@ import StasisApp from "./stasis/app.js";
 export default class AppSwitch extends React.PureComponent {
   render = () => (
     <BrowserRouter>
-      <div>Select app:</div>
       <Switch>
         <Route component={AppSelect} path="/select" />
         <Route component={StoryApp} path="/story" />

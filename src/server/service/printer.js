@@ -2,8 +2,7 @@
 import {spawn, execSync} from "node:child_process";
 import os from "node:os";
 
-import {ensureDir} from "fs-extra";
-
+import {ensureDir} from "./io.js";
 import {makePDF} from "./pdf.js";
 import {getAll} from "./setting.js";
 
