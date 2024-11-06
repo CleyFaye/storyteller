@@ -1,4 +1,4 @@
-import changeHandlerMixin from "@cley_faye/react-utils/lib/mixin/changehandler";
+import changeHandlerMixin from "@cley_faye/react-utils/lib/mixin/changehandler.js";
 import form, {resetValidation} from "@cley_faye/react-utils/lib/mixin/form.js";
 import {notEmpty} from "@cley_faye/react-utils/lib/validator/string.js";
 import {

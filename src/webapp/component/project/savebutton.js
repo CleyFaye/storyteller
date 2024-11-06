@@ -1,5 +1,4 @@
-import {IconButton} from "@material-ui/core";
-import Badge from "@material-ui/core/Badge";
+import {IconButton, Badge} from "@material-ui/core";
 import {Save as SaveIcon} from "@material-ui/icons";
 import PropTypes from "prop-types";
 import React from "react";
