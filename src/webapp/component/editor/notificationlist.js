@@ -1,24 +1,27 @@
-import React from "react";
+import {Snackbar} from "@material-ui/core";
 import PropTypes from "prop-types";
-import Snackbar from "@material-ui/core/Snackbar";
-import NotificationCtx from "../../context/notification";
-import {notificationEnum} from "../../service/notification";
+import React from "react";
+
+import NotificationCtx from "../../context/notification.js";
+import {notificationEnum} from "../../service/notification.js";
 
 class NotificationList extends React.Component {
   /** Build a single notification object */
   buildNotification(key) {
     const {label} = notificationEnum[key];
-    return <Snackbar
-      key={key}
-      open={this.props.notificationCtx[key]}
-      autoHideDuration={6000}
-      onClose={() => this.props.notificationCtx.update({[key]: false})}
-      message={label} />;
+    return (
+      <Snackbar
+        autoHideDuration={6000}
+        key={key}
+        message={label}
+        onClose={() => this.props.notificationCtx.update({[key]: false})}
+        open={this.props.notificationCtx[key]}
+      />
+    );
   }
 
   render() {
-    return Object.keys(notificationEnum).map(
-      key => this.buildNotification(key));
+    return Object.keys(notificationEnum).map((key) => this.buildNotification(key));
   }
 }
 NotificationList.propTypes = {

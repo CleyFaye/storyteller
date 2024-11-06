@@ -1,10 +1,10 @@
-import {callAPI} from "./util";
+import {callAPI} from "./util.js";
 
 export const test = (binPath, printerName, duplex) =>
   callAPI("post", "/api/v1/printer/test", {
     binPath,
-    printerName,
     duplex,
+    printerName,
   });
 
 export const printStory = (paragraphs) =>
@@ -12,5 +12,4 @@ export const printStory = (paragraphs) =>
     paragraphs,
   });
 
-export const list = () =>
-  callAPI("post", "/api/v1/printer/list");
+export const list = () => callAPI("post", "/api/v1/printer/list");

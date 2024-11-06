@@ -1,36 +1,37 @@
-import React from "react";
 import PropTypes from "prop-types";
-import {Switch} from "react-router-dom";
-import {Route} from "react-router-dom";
-import {Redirect} from "react-router-dom";
-import Parts from "./sequence/parts";
-import Part from "./sequence/part";
-import ProjectCtx from "../../context/project";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
+import React from "react";
+import {Switch, Route, Redirect} from "react-router-dom";
 
-class Sequence extends React.Component {
+import ProjectCtx from "../../context/project.js";
+
+import Part from "./sequence/part.js";
+import Parts from "./sequence/parts.js";
+
+class Sequence extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
       redirectTo: null,
-    });
+    };
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     if (!this.props.projectCtx.isOpen()) {
-      this.updateState({redirectTo: "/editor/welcome"});
+      this.setState({redirectTo: "/editor/welcome"});
     }
-  }
+  };
 
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-    return <Switch>
-      <Route path="/editor/sequence/parts" component={Parts} />
-      <Route path="/editor/sequence/part/:partId" component={Part} />
-      <Redirect to="/editor/sequence/parts" />
-    </Switch>;
+    return (
+      <Switch>
+        <Route component={Parts} path="/editor/sequence/parts" />
+        <Route component={Part} path="/editor/sequence/part/:partId" />
+        <Redirect to="/editor/sequence/parts" />
+      </Switch>
+    );
   }
 }
 Sequence.propTypes = {

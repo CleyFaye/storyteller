@@ -1,12 +1,12 @@
 import CssBaseline from "@material-ui/core/CssBaseline";
-import React from "react";
 import ReactDOM from "react-dom";
 
-import AppSwitch from "../../../src/webapp/appswitch";
+import AppSwitch from "../../../src/webapp/appswitch.js";
 
 ReactDOM.render(
   <CssBaseline>
     <AppSwitch />
   </CssBaseline>,
-  document.querySelector(".app")
+  // eslint-disable-next-line no-undef
+  document.querySelector(".app"),
 );

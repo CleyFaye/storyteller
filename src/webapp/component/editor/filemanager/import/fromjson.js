@@ -1,242 +1,233 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {Redirect} from "react-router-dom";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import changeHandlerMixin from "@cley_faye/react-utils/lib/mixin/changehandler.js";
+import {Button, TextField, Typography} from "@material-ui/core";
 import {DropzoneArea} from "material-ui-dropzone";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
-import ProjectCtx from "../../../../context/project";
-import {listExisting} from "../../../../service/project";
+import PropTypes from "prop-types";
+import React from "react";
+import {Redirect} from "react-router-dom";
 
-const loadFileContent = file => new Promise((resolve, reject) => {
-  var reader = new FileReader();
-  reader.onload = e => {
-    resolve(e.target.result);
-  };
-  reader.onerror = e => {
-    reject(e);
-  };
-  reader.readAsText(file);
-});
+import ProjectCtx from "../../../../context/project.js";
+import {listExisting} from "../../../../service/project.js";
+
+const loadFileContent = (file) =>
+  // eslint-disable-next-line promise/avoid-new
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      resolve(e.target.result);
+    };
+    reader.onerror = (e) => {
+      reject(e);
+    };
+    reader.readAsText(file);
+  });
 
 const State = {
-  GETFILE: Symbol("GETFILE"),
-  LOADING: Symbol("LOADING"),
-  GETTITLE: Symbol("GETTITLE"),
   CONFIRM_ERASE: Symbol("CONFIRM_ERASE"),
   DONE: Symbol("DONE"),
+  GETFILE: Symbol("GETFILE"),
+  GETTITLE: Symbol("GETTITLE"),
+  LOADING: Symbol("LOADING"),
 };
 
-class FromJSON extends React.Component {
+class FromJSON extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
-      state: State.GETFILE,
-      loadedData: null,
-      title: "",
+    this.defaultState = {
       error: null,
-    });
-    changeHandler(this);
+      loadedData: null,
+      state: State.GETFILE,
+      title: "",
+    };
+    this.state = {...this.defaultState};
+    this.handleChange = changeHandlerMixin(this);
   }
 
-  renderSaveWarning() {
+  renderSaveWarning = () => {
     if (!this.props.projectCtx.needSave()) {
       return null;
     }
-    return <Typography variant="overline">
-      Importing a project will close the currently open project. Make sure to
-      save your changes if needed!
-    </Typography>;
-  }
+    return (
+      <Typography variant="overline">
+        Importing a project will close the currently open project. Make sure to save your changes if
+        needed!
+      </Typography>
+    );
+  };
 
-  cancelLoad() {
-    this.resetState();
-  }
+  handleCancelLoad = () => {
+    this.setState({...this.defaultState});
+  };
 
-  handleFile(file) {
-    this.updateState({state: State.LOADING})
-      .then(() => this.loadFile(file));
-  }
+  handleFile = (file) => {
+    this.setState({state: State.LOADING});
+    // eslint-disable-next-line promise/prefer-await-to-then
+    this.loadFile(file).catch((error) => {
+      console.error(error);
+      this.setState({error: error ? error.toString() : "?"});
+    });
+  };
 
-  loadFile(file) {
-    loadFileContent(file)
-      .then(fileContent => {
-        const data = JSON.parse(fileContent);
-        if (data.magicVersion === 1) {
-          return this.loadFileStorandomy(data);
-        }
-        if (data.magicVersion === 2) {
-          return this.loadFileV2(data);
-        }
-        throw new Error("Unsupported file format");
-      })
-      .catch(error => {
-        console.error(error);
-        this.updateState({
-          error: error ? error.toString() : "?",
-        });
-      });
-  }
+  loadFile = async (file) => {
+    const fileContent = await loadFileContent(file);
+    const data = JSON.parse(fileContent);
+    if (data.magicVersion === 1) {
+      return this.loadFileStorandomy(data);
+    }
+    if (data.magicVersion === 2) {
+      return this.loadFileV2(data);
+    }
+    throw new Error("Unsupported file format");
+  };
 
-  loadFileStorandomy(data) {
+  loadFileStorandomy = (data) => {
     const loadedData = [];
     data.chapters.forEach((chapter, id) => {
       const variants = chapter;
       const title = `Chapter ${id + 1}`;
       loadedData.push({
-        type: "chapter",
         title,
+        type: "chapter",
         variants,
       });
     });
-    return this.updateState({
+    this.setState({
       loadedData,
+      state: State.GETTITLE,
       title: "Unnamed project",
-      state: State.GETTITLE,
     });
-  }
+  };
 
-  loadFileV2(data) {
-    return this.updateState({
+  loadFileV2 = (data) => {
+    this.setState({
       loadedData: data.parts,
-      title: data.title,
       state: State.GETTITLE,
+      title: data.title,
     });
-  }
+  };
 
-  confirmTitle() {
+  handleConfirmTitle = () => {
     if (this.state.title.length === 0) {
       return;
     }
-    listExisting().then(
-      existingProjects => {
-        if (existingProjects.includes(this.state.title)) {
-          this.updateState({state: State.CONFIRM_ERASE});
-        } else {
-          this.handleConfirmErase();
-        }
+    (async () => {
+      const existingProjects = await listExisting();
+      if (existingProjects.includes(this.state.title)) {
+        this.setState({state: State.CONFIRM_ERASE});
+      } else {
+        this.handleConfirmErase();
       }
-    ).catch(() => this.updateState({error: "Network error"}));
-  }
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => this.setState({error: "Network error"}));
+  };
 
-  handleConfirmErase() {
-    this.updateState({state: State.LOADING})
-      .then(() => this.props.projectCtx.newProject({
-        title: this.state.title,
-      })).then(
-        () => this.state.loadedData.reduce(
-          (acc, cur) => acc.then(() => this.props.projectCtx.addPart(cur)),
-          Promise.resolve()
-        )
-      ).then(() => this.updateState({state: State.DONE}))
-      .catch(error => this.updateState({error: error
-        ? error.toString()
-        : "Unknown error"}));
-  }
+  handleConfirmErase = () => {
+    this.setState({state: State.LOADING});
+    (async () => {
+      await this.props.projectCtx.newProject({title: this.state.title});
+      await this.state.loadedData.reduce(
+        (acc, cur) => acc.then(() => this.props.projectCtx.addPart(cur)),
+        Promise.resolve(),
+      );
+      this.setState({state: State.DONE});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch((error) => this.setState({error: error ? error.toString() : "Unknown error"}));
+  };
 
-  renderFileField() {
-    return <React.Fragment>
-      <DropzoneArea
-        acceptedFiles={[]}
-        filesLimit={1}
-        dropzoneText="Drop your file here"
-        onDrop={files => this.handleFile(files)}
-      />
-    </React.Fragment>;
-  }
+  renderFileField = () => (
+    <DropzoneArea
+      acceptedFiles={[]}
+      dropzoneText="Drop your file here"
+      filesLimit={1}
+      onDrop={this.handleFile}
+    />
+  );
 
-  renderLoading() {
-    return "Loading…";
-  }
+  renderLoading = () => "Loading…";
 
-  renderGetTitle() {
-    return <React.Fragment>
+  renderGetTitle = () => (
+    <>
       <TextField
         label="Imported project title"
+        name="title"
+        onChange={this.handleChange}
         value={this.state.title}
-        onChange={this.changeHandler("title")}
         variant="outlined"
       />
       <br />
       <Button
-        onClick={() => this.confirmTitle()}
         disabled={this.state.title.length === 0}
-        variant="contained">
+        onClick={this.handleConfirmTitle}
+        variant="contained"
+      >
         Import with that title
       </Button>
       <br />
-      <Button
-        onClick={() => this.cancelLoad()}
-        variant="contained">
+      <Button onClick={this.handleCancelLoad} variant="contained">
         Cancel
       </Button>
-    </React.Fragment>;
-  }
+    </>
+  );
 
-  renderConfirmErase() {
-    return <React.Fragment>
+  handlePickTitle = () => {
+    this.setState({state: State.GETTITLE});
+  };
+
+  renderConfirmErase = () => (
+    <>
       <Typography variant="body1">
         A project with that name already exist. Do you want to replace it?
       </Typography>
       <br />
-      <Button
-        variant="contained"
-        onClick={() => this.handleConfirmErase()} >
+      <Button onClick={this.handleConfirmErase} variant="contained">
         Yes, replace it
       </Button>
       <br />
-      <Button
-        variant="contained"
-        onClick={() => this.updateState({state: State.GETTITLE})} >
+      <Button onClick={this.handlePickTitle} variant="contained">
         No, pick a new name
       </Button>
-    </React.Fragment>;
-  }
+    </>
+  );
 
-  renderDone() {
-    return <Redirect to="/editor/welcome" />;
-  }
+  renderDone = () => <Redirect to="/editor/welcome" />;
 
-  renderStateElement() {
+  renderStateElement = () => {
     switch (this.state.state) {
-    case State.GETFILE:
-      return this.renderFileField();
-    case State.LOADING:
-      return this.renderLoading();
-    case State.GETTITLE:
-      return this.renderGetTitle();
-    case State.CONFIRM_ERASE:
-      return this.renderConfirmErase();
-    case State.DONE:
-      return this.renderDone();
-    default:
-      throw new Error(`Unexpected state ${this.state.state}`);
+      case State.GETFILE:
+        return this.renderFileField();
+      case State.LOADING:
+        return this.renderLoading();
+      case State.GETTITLE:
+        return this.renderGetTitle();
+      case State.CONFIRM_ERASE:
+        return this.renderConfirmErase();
+      case State.DONE:
+        return this.renderDone();
+      default:
+        throw new Error(`Unexpected state ${this.state.state}`);
     }
-  }
+  };
 
-  renderError() {
-    return <React.Fragment>
-      <Typography variant="h4">
-      An error occured: {this.state.error}
-      </Typography>
+  renderError = () => (
+    <>
+      <Typography variant="h4">An error occured: {this.state.error}</Typography>
       <br />
-      <Button variant="contained" onClick={() => this.cancelLoad()}>
+      <Button onClick={this.handleCancelLoad} variant="contained">
         Go back
       </Button>
-    </React.Fragment>;
-  }
+    </>
+  );
 
-  render() {
+  render = () => {
     if (this.state.error) {
       return this.renderError();
     }
-    return <React.Fragment>
-      {this.renderSaveWarning()}
-      {this.renderStateElement()}
-    </React.Fragment>;
-  }
+    return (
+      <>
+        {this.renderSaveWarning()}
+        {this.renderStateElement()}
+      </>
+    );
+  };
 }
 FromJSON.propTypes = {
   projectCtx: PropTypes.object,

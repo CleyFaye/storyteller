@@ -34,11 +34,11 @@ export const notificationEnum = {
 };
 
 /** Show a notification based on its id.
- * 
+ *
  * Context bound function.
  */
 export const show = (ctx, enumValue) =>
-  Object.keys(notificationEnum).forEach(key => {
+  Object.keys(notificationEnum).forEach((key) => {
     if (notificationEnum[key].id == enumValue.id) {
       ctx.update({[key]: true});
     }

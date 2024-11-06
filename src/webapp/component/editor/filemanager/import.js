@@ -1,55 +1,50 @@
-import React from "react";
+/* eslint-disable max-classes-per-file */
+import {AppBar, Box, Tab, Tabs, Typography} from "@material-ui/core";
 import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
-import FromJSON from "./import/fromjson";
+import React from "react";
 
-class ImportPanel extends React.Component {
+import FromJSON from "./import/fromjson.js";
+
+class ImportPanel extends React.PureComponent {
   render() {
-    return <Typography
-      component="div"
-      role="tabpanel"
-      hidden={this.props.value !== this.props.index}>
-      <Box p={3}>{this.props.children}</Box>
-    </Typography>;
+    return (
+      <Typography component="div" hidden={this.props.value !== this.props.index} role="tabpanel">
+        <Box p={3}>{this.props.children}</Box>
+      </Typography>
+    );
   }
 }
 ImportPanel.propTypes = {
-  value: PropTypes.any,
-  index: PropTypes.any,
   children: PropTypes.node,
+  index: PropTypes.any,
+  value: PropTypes.any,
 };
 
-class Import extends React.Component {
+class Import extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
-      value: 0,
-    });
-    changeHandler(this);
+    this.state = {value: 0};
   }
 
+  handleChange = (_, value) => {
+    this.setState({value});
+  };
+
   render() {
-    return <React.Fragment>
-      <AppBar position="static">
-        <Tabs
-          value={this.state.value}
-          onChange={(_, value) => this.updateState({value})}>
-          <Tab label="From JSON file" />
-        </Tabs>
-      </AppBar>
-      <ImportPanel value={this.state.value} index={0}>
-        <FromJSON />
-      </ImportPanel>
-    </React.Fragment>;
+    return (
+      <>
+        <AppBar position="static">
+          <Tabs onChange={this.handleChange} value={this.state.value}>
+            <Tab label="From JSON file" />
+          </Tabs>
+        </AppBar>
+        <ImportPanel index={0} value={this.state.value}>
+          <FromJSON />
+        </ImportPanel>
+      </>
+    );
   }
 }
-Import.propTypes = {
-};
+Import.propTypes = {};
 
 export default Import;

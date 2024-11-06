@@ -1,5 +1,6 @@
-import createState from "@cley_faye/react-utils/lib/context/state";
-import {contextFunctions} from "../service/project";
+import createState from "@cley_faye/react-utils/lib/context/state.js";
+
+import {contextFunctions} from "../service/project.js";
 
 /** The currently loaded project data */
 export default createState(
@@ -9,5 +10,5 @@ export default createState(
     parts: null,
     saved: null,
   },
-  contextFunctions
+  contextFunctions,
 );

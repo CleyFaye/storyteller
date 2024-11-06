@@ -1,6 +1,7 @@
 import express from "express";
-import {APIHandler} from "../../../util/promise";
-import {list as listFonts} from "../../../service/font";
+
+import {list as listFonts} from "../../../service/font.js";
+import {APIHandler} from "../../../util/promise.js";
 
 const router = express.Router();
 

@@ -1,6 +1,7 @@
 import express from "express";
-import {APIHandler} from "../../../../util/promise";
-import {listExisting} from "../../../../service/project";
+
+import {listExisting} from "../../../../service/project.js";
+import {APIHandler} from "../../../../util/promise.js";
 
 const router = express.Router();
 

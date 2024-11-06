@@ -1,129 +1,127 @@
-import React from "react";
+import changeHandlerMixin from "@cley_faye/react-utils/lib/mixin/changehandler.js";
+import {TextField, Typography, Button, Checkbox, Box, FormControlLabel} from "@material-ui/core";
 import PropTypes from "prop-types";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
-import NotificationCtx from "../../../context/notification";
-import Box from "@material-ui/core/Box";
-import {notificationEnum} from "../../../service/notification";
-import {getAll} from "../../../service/setting";
-import {setAll} from "../../../service/setting";
-import {test as testPrint} from "../../../service/printer";
-import {list as listPrinters} from "../../../service/printer";
+import React from "react";
 
-class Printer extends React.Component {
+import NotificationCtx from "../../../context/notification.js";
+import {notificationEnum} from "../../../service/notification.js";
+import {test as testPrint, list as listPrinters} from "../../../service/printer.js";
+import {getAll, setAll} from "../../../service/setting.js";
+
+class Printer extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
-      printerName: "",
+    this.state = {
       binPath: "",
       duplex: true,
       loading: true,
+      printerName: "",
       printers: null,
-    });
-    changeHandler(this);
+    };
+    this.handleChange = changeHandlerMixin(this);
   }
 
   componentDidMount() {
-    getAll()
-      .then(remoteConfig => this.updateState(remoteConfig))
-      .then(() => listPrinters())
-      .then(printers => this.updateState({
-        loading: false,
-        printers,
-      }));
+    (async () => {
+      const remoteConfig = await getAll();
+      const printers = await listPrinters();
+      this.setState({...remoteConfig, loading: false, printers});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
   }
 
-  handleSave() {
-    this.updateState({loading: true})
-      .then(() => setAll({
+  handleSave = () => {
+    this.setState({loading: true})(async () => {
+      await setAll({
         printerName: this.state.printerName,
         binPath: this.state.binPath,
-      }))
-      .then(() => this.updateState({loading: false}));
-  }
+      });
+      this.setState({loading: false});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
+  };
 
-  _renderSaveButton() {
-    return <Button
-      color="primary"
-      onClick={() => this.handleSave()}>
+  _renderSaveButton = () => (
+    <Button color="primary" onClick={this.handleSave}>
       Save settings
-    </Button>;
-  }
+    </Button>
+  );
 
-  testPrinter() {
-    testPrint(this.state.binPath, this.state.printerName, this.state.duplex)
-      .then(() => this.props.notificationCtx.show(
-        notificationEnum.testPrint
-      ))
-      .catch(() => this.props.notificationCtx.show(
-        notificationEnum.networkReadError
-      ));
-  }
+  handleTestPrinter = () => {
+    (async () => {
+      await testPrint(this.state.binPath, this.state.printerName, this.state.duplex);
+      this.props.notificationCtx.show(notificationEnum.testPrint);
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => this.props.notificationCtx.show(notificationEnum.networkReadError));
+  };
 
-  renderPrinterList() {
+  renderPrinterList = () => {
     if (this.state.printers === null) {
       return;
     }
-    return <React.Fragment>
-      <br />
-      {this.state.printers.map((printerName, id) => 
-        <Button
-          key={id}
-          color="secondary"
-          onClick={() => this.updateState({printerName})}>
-          {printerName}
-        </Button>
-      )}
-      <br />
-    </React.Fragment>;
-  }
+    return (
+      <>
+        <br />
+        {this.state.printers.map((printerName) => (
+          // eslint-disable-next-line react/jsx-no-bind
+          <Button color="secondary" key={printerName} onClick={() => this.setState({printerName})}>
+            {printerName}
+          </Button>
+        ))}
+        <br />
+      </>
+    );
+  };
 
-  render() {
+  render = () => {
     if (this.state.loading) {
       return <Typography variant="h4">Loading…</Typography>;
     }
-    return <React.Fragment>
-      {this._renderSaveButton()}
-      <Box>
-        <TextField
-          variant="filled"
-          label="Printer name"
-          value={this.state.printerName}
-          onChange={this.changeHandler("printerName")}
-          fullWidth />
-        {this.renderPrinterList()}
-        <TextField
-          variant="filled"
-          label="Ghostscript path (windows) or lp path (unix-like)"
-          value={this.state.binPath}
-          onChange={this.changeHandler("binPath")}
-          fullWidth />
-        <br />
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={this.state.duplex}
-              onChange={this.changeCheckboxHandler("duplex")}
-              color="primary" />
-          }
-          label="Two-sided printing (linux only)"
-        />
-        <br />
-        <Button
-          color="secondary"
-          disabled={this.state.printerName.length == 0}
-          onClick={() => this.testPrinter()}>
-        Test printer
-        </Button>
-      </Box>
-      {this._renderSaveButton()}
-    </React.Fragment>;
-  }
+    return (
+      <>
+        {this._renderSaveButton()}
+        <Box>
+          <TextField
+            fullWidth
+            label="Printer name"
+            name="printerName"
+            onChange={this.handleChange}
+            value={this.state.printerName}
+            variant="filled"
+          />
+          {this.renderPrinterList()}
+          <TextField
+            fullWidth
+            label="Ghostscript path (windows) or lp path (unix-like)"
+            name="binPath"
+            onChange={this.handleChange}
+            value={this.state.binPath}
+            variant="filled"
+          />
+          <br />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={this.state.duplex}
+                color="primary"
+                onChange={this.changeCheckboxHandler("duplex")}
+              />
+            }
+            label="Two-sided printing (linux only)"
+          />
+          <br />
+          <Button
+            color="secondary"
+            disabled={this.state.printerName.length === 0}
+            onClick={this.handleTestPrinter}
+          >
+            Test printer
+          </Button>
+        </Box>
+        {this._renderSaveButton()}
+      </>
+    );
+  };
 }
 Printer.propTypes = {
   notificationCtx: PropTypes.object,

@@ -1,69 +1,64 @@
-import React from "react";
+/* eslint-disable max-classes-per-file */
+import {AppBar, Tabs, Tab, Typography, Box} from "@material-ui/core";
 import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
-import Printer from "./setting/printer";
-import Theme from "./setting/theme";
-import Font from "./setting/font";
+import React from "react";
 
-class SettingPanel extends React.Component {
+import Font from "./setting/font.js";
+import Printer from "./setting/printer.js";
+import Theme from "./setting/theme.js";
+
+class SettingPanel extends React.PureComponent {
   render() {
-    return <Typography
-      component="div"
-      role="tabpanel"
-      hidden={this.props.value !== this.props.index}>
-      <Box p={3}>{this.props.children}</Box>
-    </Typography>;
+    return (
+      <Typography component="div" hidden={this.props.value !== this.props.index} role="tabpanel">
+        <Box p={3}>{this.props.children}</Box>
+      </Typography>
+    );
   }
 }
 SettingPanel.propTypes = {
-  value: PropTypes.any,
-  index: PropTypes.any,
   children: PropTypes.node,
+  index: PropTypes.any,
+  value: PropTypes.any,
 };
 
-class Setting extends React.Component {
+class Setting extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
       value: 0,
-    });
-    changeHandler(this);
+    };
   }
 
+  handleChange = (_, value) => this.setState({value});
+
   render() {
-    return <React.Fragment>
-      <AppBar position="static">
-        <Tabs
-          value={this.state.value}
-          onChange={(_, value) => this.updateState({value})}>
-          <Tab label="Printer" />
-          <Tab label="Font" />
-          <Tab label="Theme" />
-          <Tab label="Updates" />
-        </Tabs>
-      </AppBar>
-      <SettingPanel value={this.state.value} index={0}>
-        <Printer />
-      </SettingPanel>
-      <SettingPanel value={this.state.value} index={1}>
-        <Font />
-      </SettingPanel>
-      <SettingPanel value={this.state.value} index={2}>
-        <Theme />
-      </SettingPanel>
-      <SettingPanel value={this.state.value} index={3}>
-        Update page (yeah still not done)
-      </SettingPanel>
-    </React.Fragment>;
+    return (
+      <>
+        <AppBar position="static">
+          <Tabs onChange={this.handleChange} value={this.state.value}>
+            <Tab label="Printer" />
+            <Tab label="Font" />
+            <Tab label="Theme" />
+            <Tab label="Updates" />
+          </Tabs>
+        </AppBar>
+        <SettingPanel index={0} value={this.state.value}>
+          <Printer />
+        </SettingPanel>
+        <SettingPanel index={1} value={this.state.value}>
+          <Font />
+        </SettingPanel>
+        <SettingPanel index={2} value={this.state.value}>
+          <Theme />
+        </SettingPanel>
+        <SettingPanel index={3} value={this.state.value}>
+          Update page (yeah still not done)
+        </SettingPanel>
+      </>
+    );
   }
 }
-Setting.propTypes = {
-};
+Setting.propTypes = {};
 
 export default Setting;

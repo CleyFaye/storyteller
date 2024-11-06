@@ -1,24 +1,22 @@
 import React from "react";
-import {
-  BrowserRouter,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
-import StoryApp from "./app";
-import StasisApp from "./stasis/app";
-import AppSelect from "./appselect";
+import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
+
+import StoryApp from "./app.js";
+import AppSelect from "./appselect.js";
+import StasisApp from "./stasis/app.js";
 
 export default class AppSwitch extends React.Component {
   render() {
-    return <BrowserRouter>
-      <div>Select app:</div>
-      <Switch>
-        <Route path="/select" component={AppSelect} />
-        <Route path="/story" component={StoryApp} />
-        <Route path="/stasis" component={StasisApp} />
-        <Redirect to="/select" />
-      </Switch>
-    </BrowserRouter>;
+    return (
+      <BrowserRouter>
+        <div>Select app:</div>
+        <Switch>
+          <Route component={AppSelect} path="/select" />
+          <Route component={StoryApp} path="/story" />
+          <Route component={StasisApp} path="/stasis" />
+          <Redirect to="/select" />
+        </Switch>
+      </BrowserRouter>
+    );
   }
 }

@@ -1,19 +1,19 @@
 /** Build an empty chapter part */
-const buildNewChapterPart = partDef => ({
+const buildNewChapterPart = (partDef) => ({
   type: PartTypes.chapter.identifier,
   title: partDef.title,
   variants: partDef.variants || [],
 });
 
 /** Duplicate content into a new object */
-const loadChapterIntoContext = partData => ({
+const loadChapterIntoContext = (partData) => ({
   partType: PartTypes.chapter.identifier,
   partTitle: partData.title,
   partVariants: partData.variants.slice(),
 });
 
 /** Return the part object from contextData */
-const saveChapterFromContext = contextData => ({
+const saveChapterFromContext = (contextData) => ({
   type: "chapter",
   title: contextData.partTitle,
   variants: contextData.partVariants.slice(),
@@ -34,15 +34,15 @@ const isChapterDifferent = (partData, contextData) => {
   return false;
 };
 
-const exportChapter = partData => ({
+const exportChapter = (partData) => ({
   title: partData.title,
   type: partData.type,
   variants: partData.variants,
 });
 
-const getChapterTitle = partData =>
-  `${partData.title} (${partData.variants.length} `
-  + `variant${partData.variants.length > 1 ? "s" : ""})`;
+const getChapterTitle = (partData) =>
+  `${partData.title} (${partData.variants.length} ` +
+  `variant${partData.variants.length > 1 ? "s" : ""})`;
 
 /** Possible part types */
 export const PartTypes = {
@@ -64,10 +64,10 @@ export const PartTypes = {
     isDifferent: isChapterDifferent,
     // Get a display title for editor UI
     getTitle: getChapterTitle,
-  }
+  },
 };
 
-const getPartType = partType => {
+const getPartType = (partType) => {
   const partTypeDef = PartTypes[partType];
   if (partTypeDef === undefined) {
     throw new Error(`Unknown part type: "${partType}"`);
@@ -76,43 +76,40 @@ const getPartType = partType => {
 };
 
 /** Create a new empty part from a basic definitions */
-export const buildNew = partDef =>
-  getPartType(partDef.type).buildNew(partDef);
+export const buildNew = (partDef) => getPartType(partDef.type).buildNew(partDef);
 
 /** Create a clone of a part */
-export const loadIntoContext = partDef =>
-  getPartType(partDef.type).loadIntoContext(partDef);
+export const loadIntoContext = (partDef) => getPartType(partDef.type).loadIntoContext(partDef);
 
 /** Save part content from an editor context.
- * 
+ *
  * @param {Object} contextData
  * The udpated data from loadIntoContext()
- * 
+ *
  * @return {Object}
  * The part to save
  */
-export const saveFromContext = contextData => {
+export const saveFromContext = (contextData) => {
   const partTypeDef = getPartType(contextData.partType);
   return partTypeDef.saveFromContext(contextData);
 };
 
 /** Return a serializable object, suitable to recreate the part later
- * 
+ *
  * @param {Object} part
- * 
+ *
  * @return {Object}
  */
-export const exportPart = part =>
-  getPartType(part.type).export(part);
+export const exportPart = (part) => getPartType(part.type).export(part);
 
 /** Determine if an editor context need to be saved
- * 
+ *
  * @param {Object} part
  * Part from the projectCtx
- * 
+ *
  * @param {Object} contextData
  * Updated value from loadIntoContext()
- * 
+ *
  * @return {bool}
  * true if the context needs to be saved
  */
@@ -124,7 +121,7 @@ export const isDifferent = (part, contextData) => {
   return partTypeDef.isDifferent(part, contextData);
 };
 
-export const getTitle = partData => {
+export const getTitle = (partData) => {
   const partTypeDef = getPartType(partData.type);
   return partTypeDef.getTitle(partData);
 };

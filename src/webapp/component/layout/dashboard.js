@@ -1,39 +1,30 @@
-import React from "react";
-import PropTypes from "prop-types";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
+/* eslint-disable no-magic-numbers */
+import {
+  withStyles,
+  CssBaseline,
+  Drawer,
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Container,
+} from "@material-ui/core";
+import {Menu as MenuIcon, ChevronLeft as ChevronLeftIcon} from "@material-ui/icons";
 import clsx from "clsx";
-import {withStyles} from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Drawer from "@material-ui/core/Drawer";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Container from "@material-ui/core/Container";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import MainMenu from "./mainmenu";
-import ProjectMenu from "./projectmenu";
-import ProjectSaveButton from "../project/savebutton";
-import ProjectTitle from "../project/title";
+import PropTypes from "prop-types";
+import React from "react";
+
 import EditorSwitch from "../editor/switch.js";
+import ProjectSaveButton from "../project/savebutton.js";
+import ProjectTitle from "../project/title.js";
+
+import MainMenu from "./mainmenu.js";
+import ProjectMenu from "./projectmenu.js";
 
 const drawerWidth = 240;
 
-const styles = theme => ({
-  root: {
-    display: "flex",
-  },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: "0 8px",
-    ...theme.mixins.toolbar,
-  },
+// eslint-disable-next-line max-lines-per-function
+const styles = (theme) => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(["width", "margin"], {
@@ -43,29 +34,30 @@ const styles = theme => ({
   },
   appBarShift: {
     marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    width: `calc(100% - ${drawerWidth}px)`,
   },
-  menuButton: {
-    marginRight: 36,
+  appBarSpacer: theme.mixins.toolbar,
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
   },
-  menuButtonHidden: {
-    display: "none",
-  },
-  title: {
+  content: {
     flexGrow: 1,
+    height: "100vh",
+    overflow: "auto",
   },
   drawerPaper: {
     position: "relative",
-    whiteSpace: "nowrap",
-    width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    whiteSpace: "nowrap",
+    width: drawerWidth,
   },
   drawerPaperClose: {
     overflowX: "hidden",
@@ -78,87 +70,110 @@ const styles = theme => ({
       width: theme.spacing(9),
     },
   },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: "100vh",
-    overflow: "auto",
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: "flex",
-    overflow: "auto",
-    flexDirection: "column",
-  },
   fixedHeight: {
     height: 240,
   },
+  menuButton: {
+    marginRight: 36,
+  },
+  menuButtonHidden: {
+    display: "none",
+  },
+  paper: {
+    display: "flex",
+    flexDirection: "column",
+    overflow: "auto",
+    padding: theme.spacing(2),
+  },
+  root: {
+    display: "flex",
+  },
+  title: {
+    flexGrow: 1,
+  },
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
+  },
+  toolbarIcon: {
+    alignItems: "center",
+    display: "flex",
+    justifyContent: "flex-end",
+    padding: "0 8px",
+    ...theme.mixins.toolbar,
+  },
 });
 
-class Dashboard extends React.Component {
+class Dashboard extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
       open: true,
-    });
+    };
   }
 
-  handleDrawerOpen() {
-    this.updateState({open: true});
-  }
+  handleDrawerOpen = () => {
+    this.setState({open: true});
+  };
 
-  handleDrawerClose() {
-    this.updateState({open: false});
-  }
+  handleDrawerClose = () => {
+    this.setState({open: false});
+  };
 
-  render() {
+  render = () => {
     const classes = this.props.classes;
-    return <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, this.state.open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={() => this.handleDrawerOpen()}
-            className={clsx(classes.menuButton, this.state.open && classes.menuButtonHidden)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <ProjectTitle prefix="Story Teller" />
-          </Typography>
-          <ProjectSaveButton />
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-        }}
-        open={this.state.open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={() => this.handleDrawerClose()}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <ProjectMenu />
-        <MainMenu />
-      </Drawer>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <EditorSwitch />
-        </Container>
-      </main>
-    </div>;
-  }
+    return (
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBar
+          className={clsx(classes.appBar, this.state.open && classes.appBarShift)}
+          position="absolute"
+        >
+          <Toolbar className={classes.toolbar}>
+            <IconButton
+              aria-label="open drawer"
+              className={clsx(classes.menuButton, this.state.open && classes.menuButtonHidden)}
+              color="inherit"
+              edge="start"
+              onClick={this.handleDrawerOpen}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              className={classes.title}
+              color="inherit"
+              component="h1"
+              noWrap
+              variant="h6"
+            >
+              <ProjectTitle prefix="Story Teller" />
+            </Typography>
+            <ProjectSaveButton />
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          classes={{
+            paper: clsx(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
+          }}
+          open={this.state.open}
+          variant="permanent"
+        >
+          <div className={classes.toolbarIcon}>
+            <IconButton onClick={this.handleDrawerClose}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </div>
+          <ProjectMenu />
+          <MainMenu />
+        </Drawer>
+        <main className={classes.content}>
+          <div className={classes.appBarSpacer} />
+          <Container className={classes.container} maxWidth="lg">
+            <EditorSwitch />
+          </Container>
+        </main>
+      </div>
+    );
+  };
 }
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,

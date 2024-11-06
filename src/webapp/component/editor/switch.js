@@ -1,25 +1,26 @@
 import React from "react";
-import {Switch} from "react-router-dom";
-import {Route} from "react-router-dom";
-import {Redirect} from "react-router-dom";
-import Welcome from "./welcome";
-import New from "./new";
-import Sequence from "./sequence";
-import Load from "./load";
-import Setting from "./setting";
-import FileManager from "./filemanager";
+import {Switch, Route, Redirect} from "react-router-dom";
+
+import FileManager from "./filemanager.js";
+import Load from "./load.js";
+import New from "./new.js";
+import Sequence from "./sequence.js";
+import Setting from "./setting.js";
+import Welcome from "./welcome.js";
 
 class EditorSwitch extends React.Component {
   render() {
-    return <Switch>
-      <Route path="/editor/welcome" component={Welcome} />
-      <Route path="/editor/new" component={New} />
-      <Route path="/editor/sequence" component={Sequence} />
-      <Route path="/editor/load" component={Load} />
-      <Route path="/editor/settings" component={Setting} />
-      <Route path="/editor/filemanager" component={FileManager} />
-      <Redirect to="/editor/welcome" />
-    </Switch>;
+    return (
+      <Switch>
+        <Route component={Welcome} path="/editor/welcome" />
+        <Route component={New} path="/editor/new" />
+        <Route component={Sequence} path="/editor/sequence" />
+        <Route component={Load} path="/editor/load" />
+        <Route component={Setting} path="/editor/settings" />
+        <Route component={FileManager} path="/editor/filemanager" />
+        <Redirect to="/editor/welcome" />
+      </Switch>
+    );
   }
 }
 

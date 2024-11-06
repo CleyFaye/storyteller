@@ -1,11 +1,16 @@
-import express from "express";
-import routes from "./route";
-import openURL from "open";
+/* eslint-disable no-console */
+import * as fs from "node:fs";
+
 import program from "commander";
-import pkg from "../package.json";
-import {setRef} from "./util/close";
-import winston from "winston";
-import expressWinston from "express-winston";
+import express from "express";
+
+import openURL from "open";
+
+import routes from "./route/index.js";
+
+import {setRef} from "./util/close.js";
+
+const pkg = JSON.parse(fs.readFileSync("package.json"));
 
 const main = ({port, open}) => {
   const app = express();
@@ -32,12 +37,14 @@ const main = ({port, open}) => {
   app.use(express.static("dist/storyteller"));
   app.use(routes);
   const server = app.listen(port, "localhost", () => {
-    const port = server.address().port;
-    const url = `http://localhost:${port}/app`;
+    const activePort = server.address().port;
+    const url = `http://localhost:${activePort}/app`;
     console.log("Server started");
     if (open) {
       console.log("A browser should have been opened to display the user interface.");
-      console.log("If that's not the case, or you want to open a new window, use the following URL:");
+      console.log(
+        "If that's not the case, or you want to open a new window, use the following URL:",
+      );
       openURL(url);
     } else {
       console.log("You can open the interface by following this URL:");

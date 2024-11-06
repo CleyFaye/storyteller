@@ -1,6 +1,6 @@
-import createState from "@cley_faye/react-utils/lib/context/state";
-import {notificationEnum} from "../service/notification";
-import {contextFunctions} from "../service/notification";
+import createState from "@cley_faye/react-utils/lib/context/state.js";
+
+import {notificationEnum, contextFunctions} from "../service/notification.js";
 
 /** Visible notifications */
 export default createState(
@@ -11,5 +11,5 @@ export default createState(
       return acc;
     }, {}),
   },
-  contextFunctions
+  contextFunctions,
 );

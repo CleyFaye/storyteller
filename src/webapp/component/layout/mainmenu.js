@@ -1,13 +1,15 @@
-import React from "react";
+import {Divider, List} from "@material-ui/core";
+
+import {SettingsApplications as SettingsApplicationsIcon} from "@material-ui/icons";
 import PropTypes from "prop-types";
-import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List";
-import {buildMenuList} from "./util";
-import SettingsApplicationsIcon from "@material-ui/icons/SettingsApplications";
-import ProjectCtx from "../../context/project";
-import NotificationCtx from "../../context/notification";
-import SaveCtx from "../../context/save";
-import {dispatch as dispatchAction} from "../../service/action";
+import React from "react";
+
+import NotificationCtx from "../../context/notification.js";
+import ProjectCtx from "../../context/project.js";
+import SaveCtx from "../../context/save.js";
+import {dispatch as dispatchAction} from "../../service/action.js";
+
+import {buildMenuList} from "./util.js";
 
 const mainEntries = [
   {
@@ -24,16 +26,17 @@ class MainMenu extends React.Component {
       actionName,
       this.props.projectCtx,
       this.props.saveCtx,
-      this.props.notificationCtx);
+      this.props.notificationCtx,
+    );
   }
 
   render() {
-    return <React.Fragment>
-      <Divider />
-      <List>
-        {buildMenuList(mainEntries, action => this.runAction(action))}
-      </List>
-    </React.Fragment>;
+    return (
+      <>
+        <Divider />
+        <List>{buildMenuList(mainEntries, (action) => this.runAction(action))}</List>
+      </>
+    );
   }
 }
 MainMenu.propTypes = {
@@ -42,10 +45,4 @@ MainMenu.propTypes = {
   saveCtx: PropTypes.object,
 };
 
-export default ProjectCtx.withCtx(
-  SaveCtx.withCtx(
-    NotificationCtx.withCtx(
-      MainMenu
-    )
-  )
-);
+export default ProjectCtx.withCtx(SaveCtx.withCtx(NotificationCtx.withCtx(MainMenu)));

@@ -1,80 +1,87 @@
-import React from "react";
+/* eslint-disable no-magic-numbers */
 import PropTypes from "prop-types";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import ProjectCtx from "../../context/project";
-import BigDigit from "./bigdigit";
-import {loadCSS} from "../../util";
-import {getAll} from "../../service/setting";
+import React from "react";
 
-class Basic extends React.Component {
+import ProjectCtx from "../../context/project.js";
+
+import {getAll} from "../../service/setting.js";
+import {loadCSS} from "../../util.js";
+
+import BigDigit from "./bigdigit.js";
+
+class Basic extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
       selections: this.randomSelection(),
-    });
+    };
     this._styleSheet = null;
   }
 
-  componentDidMount() {
-    getAll()
-      .then(({theme, uiScale}) => {
-        this._styleSheet = loadCSS(`/themes/${theme}/base.css`);
-        document.documentElement.style.setProperty("--ui-scale", uiScale / 10);
-      });
-  }
+  componentDidMount = () => {
+    (async () => {
+      const {theme, uiScale} = await getAll();
+      this._styleSheet = loadCSS(`/themes/${theme}/base.css`);
+      document.documentElement.style.setProperty("--ui-scale", uiScale / 10);
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
+  };
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     if (this._styleSheet) {
       this._styleSheet.remove();
       this._styleSheet = null;
     }
-  }
+  };
 
-  randomSelection() {
-    return this.props.projectCtx.parts.map(
-      () => Math.floor(Math.random() * 10)
-    );
-  }
+  randomSelection = () => this.props.projectCtx.parts.map(() => Math.floor(Math.random() * 10));
 
-  randomizeSelection() {
-    this.updateState({
+  randomizeSelection = () => {
+    this.setState({
       selections: this.randomSelection(),
     });
-  }
+  };
 
-  printStory() {
-    this.props.projectCtx.printVariant({
-      selections: this.getChapterSelection(),
-    }).then(() => this.randomizeSelection());
-  }
+  handlePrintStory = () => {
+    (async () => {
+      await this.props.projectCtx.printVariant({
+        selections: this.getChapterSelection(),
+      });
+      this.randomizeSelection();
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
+  };
 
-  getChapterSelection() {
-    return this.state.selections.map((selection, chapterId) =>
-      selection % this.props.projectCtx.parts[chapterId].variants.length
+  getChapterSelection = () =>
+    this.state.selections.map(
+      (selection, chapterId) => selection % this.props.projectCtx.parts[chapterId].variants.length,
     );
-  }
 
-  updateSelection(id, value) {
-    const selections = this.state.selections.slice();
-    selections[id] = value;
-    this.updateState({selections});
-  }
+  updateSelection = (id, value) => {
+    this.setState((oldState) => {
+      const selections = oldState.selections.slice();
+      selections[id] = value;
+      return {selections};
+    });
+  };
 
-  render() {
-    return <React.Fragment>
-      <div className="player">
-        <div className="butts">
-          {this.state.selections.map((value, id) =>
-            <BigDigit
-              key={id}
-              className={`bigButt butt-${id}`}
-              value={value}
-              onChange={v => this.updateSelection(id, v)} />)}
-        </div>
-        <div className="generateButt" onClick={() => this.printStory()} />
+  render = () => (
+    <div className="player">
+      <div className="butts">
+        {this.state.selections.map((value, id) => (
+          <BigDigit
+            className={`bigButt butt-${id}`}
+            // eslint-disable-next-line react/no-array-index-key
+            key={id}
+            // eslint-disable-next-line react/jsx-no-bind
+            onChange={(v) => this.updateSelection(id, v)}
+            value={value}
+          />
+        ))}
       </div>
-    </React.Fragment>;
-  }
+      <div className="generateButt" onClick={this.handlePrintStory} />
+    </div>
+  );
 }
 Basic.propTypes = {
   projectCtx: PropTypes.object,

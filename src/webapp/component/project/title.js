@@ -1,6 +1,7 @@
-import React from "react";
 import PropTypes from "prop-types";
-import ProjectCtx from "../../context/project";
+import React from "react";
+
+import ProjectCtx from "../../context/project.js";
 
 /** Display the project title */
 class Title extends React.Component {
@@ -11,9 +12,8 @@ class Title extends React.Component {
       return `${this.props.prefix}`;
     } else if (this.props.projectCtx.isOpen()) {
       return `${this.props.projectCtx.title}`;
-    } else {
-      return null;
     }
+    return null;
   }
 }
 Title.propTypes = {

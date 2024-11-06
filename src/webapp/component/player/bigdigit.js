@@ -1,99 +1,90 @@
-import React from "react";
+/* eslint-disable no-magic-numbers */
 import PropTypes from "prop-types";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import cb from "@cley_faye/react-utils/lib/mixin/cb";
+import React from "react";
 
-class BigDigit extends React.Component {
+class BigDigit extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
       displayedNumber: this.props.value,
-    });
-    cb(this);
+    };
     this._cycleTimer = null;
   }
 
-  goHigher() {
+  handleGoHigher = () => {
     const newValue = this.props.value + 1;
-    this.cb(this.props.onChange, newValue == 10 ? 0 : newValue);
-  }
+    this.props.onChange?.(newValue === 10 ? 0 : newValue);
+  };
 
-  goLower() {
+  handleGoLower = () => {
     const newValue = this.props.value - 1;
-    this.cb(this.props.onChange, newValue == -1 ? 9 : newValue);
-  }
+    this.props.onChange?.(newValue === -1 ? 9 : newValue);
+  };
 
-  goForward() {
+  goForward = () => {
     const offset = this.props.value - this.state.displayedNumber;
     const naturalForward = offset > 0;
-    return (Math.abs(offset) > 5)
-      ? !naturalForward
-      : naturalForward;
-  }
+    return Math.abs(offset) > 5 ? !naturalForward : naturalForward;
+  };
 
-  getNumberClass() {
-    if (this.state.displayedNumber != this.props.value) {
-      const direction = this.goForward()
-        ? "forward"
-        : "backward";
+  getNumberClass = () => {
+    if (this.state.displayedNumber !== this.props.value) {
+      const direction = this.goForward() ? "forward" : "backward";
       return `from-${this.state.displayedNumber}-${direction}`;
     }
     return `fixed-${this.state.displayedNumber}`;
-  }
+  };
 
-  updateCycle() {
+  updateCycle = () => {
     this._cycleTimer = null;
-    let newValue = this.goForward()
-      ? this.state.displayedNumber + 1
-      : this.state.displayedNumber - 1;
-    if (newValue < 0) {
-      newValue = 9;
-    }
-    if (newValue > 9) {
-      newValue = 0;
-    }
-    this.updateState({displayedNumber: newValue})
-      .then(() => this.triggerCycle());
-  }
+    this.setState((oldState) => {
+      let newValue = this.goForward() ? oldState.displayedNumber + 1 : oldState.displayedNumber - 1;
+      if (newValue < 0) {
+        newValue = 9;
+      }
+      if (newValue > 9) {
+        newValue = 0;
+      }
+      this.triggerCycle();
+      return {displayedNumber: newValue};
+    });
+  };
 
-  triggerCycle() {
+  triggerCycle = () => {
     if (this._cycleTimer) {
       return;
     }
-    if (this.state.displayedNumber == this.props.value) {
+    if (this.state.displayedNumber === this.props.value) {
       return;
     }
     this._cycleTimer = setTimeout(() => this.updateCycle(), 500);
-  }
+  };
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     if (this._cycleTimer) {
       clearTimeout(this._cycleTimer);
     }
-  }
+  };
 
-  componentDidUpdate() {
+  componentDidUpdate = () => {
     this.triggerCycle();
-  }
+  };
 
-  render() {
+  render = () => {
     const numberClass = this.getNumberClass();
-    return <div className={this.props.className}>
-      <div
-        className="upButton"
-        onClick={() => this.goHigher()} />
-      <div
-        className={`digit ${numberClass}`} />
-      <div
-        className="downButton"
-        onClick={() => this.goLower()} />
-    </div>;
-  }
+    return (
+      <div className={this.props.className}>
+        <div className="upButton" onClick={this.handleGoHigher} />
+        <div className={`digit ${numberClass}`} />
+        <div className="downButton" onClick={this.handleGoLower} />
+      </div>
+    );
+  };
 }
 BigDigit.propTypes = {
   className: PropTypes.string,
-  value: PropTypes.number,
   onChange: PropTypes.func,
+  value: PropTypes.number,
 };
 
 export default BigDigit;

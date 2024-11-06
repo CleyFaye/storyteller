@@ -1,8 +1,5 @@
-import {test as testPrint} from "../api/printer";
-import {list as listPrinters} from "../api/printer";
+import {test as testPrint, list as listPrinters} from "../api/printer.js";
 
-export const test = (binPath, printerName, duplex) =>
-  testPrint(binPath, printerName, duplex);
+export const test = (binPath, printerName, duplex) => testPrint(binPath, printerName, duplex);
 
-export const list = () =>
-  listPrinters();
+export const list = () => listPrinters();

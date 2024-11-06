@@ -1,11 +1,12 @@
 import express from "express";
-import monitoring from "./monitoring";
-import close from "./close";
-import project from "./project";
-import setting from "./setting";
-import printer from "./printer";
-import theme from "./theme";
-import font from "./font";
+
+import close from "./close.js";
+import font from "./font.js";
+import monitoring from "./monitoring.js";
+import printer from "./printer.js";
+import project from "./project/index.js";
+import setting from "./setting.js";
+import theme from "./theme.js";
 
 const router = express.Router();
 

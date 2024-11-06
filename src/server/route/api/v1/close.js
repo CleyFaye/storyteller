@@ -1,10 +1,11 @@
 import express from "express";
-import {APIHandler} from "../../../util/promise";
-import {closeServer} from "../../../util/close";
+
+import {closeServer} from "../../../util/close.js";
+import {APIHandler} from "../../../util/promise.js";
 
 const router = express.Router();
 
-const root = () => Promise.resolve().then(() => closeServer());
+const root = () => closeServer();
 router.get("/", APIHandler(root));
 
 export default router;

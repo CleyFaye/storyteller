@@ -1,5 +1,4 @@
-import {getAll as getAllSettings} from "../api/setting";
-import {setAll as setAllSettings} from "../api/setting";
+import {getAll as getAllSettings, setAll as setAllSettings} from "../api/setting.js";
 
 export const getAll = () => getAllSettings();
-export const setAll = settings => setAllSettings(settings);
+export const setAll = (settings) => setAllSettings(settings);

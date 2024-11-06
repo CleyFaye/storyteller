@@ -1,139 +1,129 @@
-import React from "react";
+import {
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+} from "@material-ui/core";
 import PropTypes from "prop-types";
-import ProjectCtx from "../../context/project";
+import React from "react";
 import {Redirect} from "react-router-dom";
-import NotificationCtx from "../../context/notification";
-import Typography from "@material-ui/core/Typography";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import {listExisting} from "../../service/project";
-import {notificationEnum} from "../../service/notification";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from "@material-ui/core/Button";
 
-class Load extends React.Component {
+import NotificationCtx from "../../context/notification.js";
+import ProjectCtx from "../../context/project.js";
+
+import {notificationEnum} from "../../service/notification.js";
+import {listExisting} from "../../service/project.js";
+
+class Load extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
       availableProjects: null,
-      showWarning: false,
       loadItem: null,
       redirectTo: null,
-    });
+      showWarning: false,
+    };
   }
-  componentDidMount() {
-    listExisting()
-      .then(availableProjects => this.updateState({
-        availableProjects
-      }))
-      .catch(() => this.props.notificationCtx.show(
-        notificationEnum.networkReadError));
-  }
+
+  componentDidMount = () => {
+    (async () => {
+      const availableProjects = await listExisting();
+      this.setState({availableProjects});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => this.props.notificationCtx.show(notificationEnum.networkReadError));
+  };
 
   /** User clicked on a project to load it */
-  handleLoad(projectName) {
-    this.updateState({loadItem: projectName})
-      .then(() => {
-        if (this.props.projectCtx.needSave()) {
-          this.updateState({showWarning: true});
-        } else {
-          this.handleLoadConfirm();
-        }
-      });
-  }
+  handleLoad = (projectName) => {
+    this.setState({loadItem: projectName});
+    if (this.props.projectCtx.needSave()) {
+      this.setState({showWarning: true});
+    } else {
+      this.handleLoadConfirm();
+    }
+  };
 
   /** User confirmed loading */
-  handleLoadConfirm() {
-    this.updateState({showWarning: false})
-      .then(() => this.props.projectCtx.loadProject(this.state.loadItem))
-      .then(() => this.props.notificationCtx.show(
-        notificationEnum.loadSuccess))
-      .then(() => this.updateState({redirectTo: "/editor/sequence"}))
-      .catch(
-        () => this.updateState({loadItem: null})
-          .then(() => this.props.notificationCtx.show(
-            notificationEnum.loadFailure))
-      );
-  }
+  handleLoadConfirm = () => {
+    this.setState({showWarning: false});
+    (async () => {
+      await this.props.projectCtx.loadProject(this.state.loadItem);
+      this.props.notificationCtx.show(notificationEnum.loadSuccess);
+      this.setState({redirectTo: "/editor/sequence"});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {
+      this.setState({loadItem: null});
+      this.props.notificationCtx.show(notificationEnum.loadFailure);
+    });
+  };
 
-  renderConfirmErase() {
-    return <Dialog 
-      open={this.state.showWarning}
-      onClose={() => this.updateState({
-        showWarning: false,
-      })}>
+  handleCloseWarning = () => {
+    this.setState({showWarning: false});
+  };
+
+  handleCancel = () =>
+    this.setState({
+      showWarning: false,
+      loadItem: null,
+    });
+
+  renderConfirmErase = () => (
+    <Dialog onClose={this.handleCloseWarning} open={this.state.showWarning}>
       <DialogTitle>Load project</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Current project have unsaved changes. If you proceed you will lose
-          these changes. Do you want to continue?
+          Current project have unsaved changes. If you proceed you will lose these changes. Do you
+          want to continue?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button
-          color="primary"
-          onClick={() => this.updateState({
-            showWarning: false,
-            loadItem: null,
-          })}>
-            Cancel
+        <Button color="primary" onClick={this.handleCancel}>
+          Cancel
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => this.handleLoadConfirm()}>
-            Continue
+        <Button color="primary" onClick={this.handleLoadConfirm} variant="contained">
+          Continue
         </Button>
       </DialogActions>
-    </Dialog>;
-  }
+    </Dialog>
+  );
 
-
-  renderItems() {
-    return this.state.availableProjects.map(
-      projectName => <ListItem
-        button
-        key={projectName}
-        onClick={() => this.handleLoad(projectName)}>
+  renderItems = () =>
+    this.state.availableProjects.map((projectName) => (
+      // eslint-disable-next-line react/jsx-no-bind
+      <ListItem button key={projectName} onClick={() => this.handleLoad(projectName)}>
         <ListItemText primary={projectName} />
-      </ListItem>);
-  }
+      </ListItem>
+    ));
 
-  renderRedirect() {
+  renderRedirect = () => {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
     return null;
-  }
+  };
 
-  render() {
+  render = () => {
     if (this.state.availableProjects === null) {
-      return <Typography variant="body1">
-        Please wait while we load the projects list…
-      </Typography>;
+      return <Typography variant="body1">Please wait while we load the projects list…</Typography>;
     }
-    if (this.state.availableProjects.length == 0) {
-      return <Typography variant="body1">
-        There is no project saved on the server.
-      </Typography>;
+    if (this.state.availableProjects.length === 0) {
+      return <Typography variant="body1">There is no project saved on the server.</Typography>;
     }
-    return <React.Fragment>
-      {this.renderConfirmErase()}
-      {this.renderRedirect()}
-      <Typography variant="h4">
-        Select the project to load:
-      </Typography>
-      <List>
-        {this.renderItems()}
-      </List>
-    </React.Fragment>;
-  }
+    return (
+      <>
+        {this.renderConfirmErase()}
+        {this.renderRedirect()}
+        <Typography variant="h4">Select the project to load:</Typography>
+        <List>{this.renderItems()}</List>
+      </>
+    );
+  };
 }
 Load.propTypes = {
   projectCtx: PropTypes.object,

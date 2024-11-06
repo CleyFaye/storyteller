@@ -1,4 +1,3 @@
-import {callAPI} from "./util";
+import {callAPI} from "./util.js";
 
-export const list = () =>
-  callAPI("post", "/api/v1/font/list");
+export const list = () => callAPI("post", "/api/v1/font/list");

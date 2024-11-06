@@ -1,15 +1,12 @@
 import React from "react";
-import {BrowserRouter} from "react-router-dom";
-import {Route} from "react-router-dom";
-import {Redirect} from "react-router-dom";
-import {Switch} from "react-router-dom";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import Editor from "./component/editor/editor";
-import Player from "./component/player";
-import ProjectCtx from "./context/project";
-import SaveCtx from "./context/save";
-import NotificationList from "./component/editor/notificationlist";
-import NotificationCtx from "./context/notification";
+import {BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
+
+import Editor from "./component/editor/editor.js";
+import NotificationList from "./component/editor/notificationlist.js";
+import Player from "./component/player.js";
+import NotificationCtx from "./context/notification.js";
+import ProjectCtx from "./context/project.js";
+import SaveCtx from "./context/save.js";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -22,9 +19,8 @@ export default class App extends React.Component {
   }
 
   registerExitHandler() {
-    this._registeredExitHandler = e => {
-      if (this.state.projectCtx.needSave()
-        || this.state.saveCtx.needSave) {
+    this._registeredExitHandler = (e) => {
+      if (this.state.projectCtx.needSave() || this.state.saveCtx.needSave) {
         e.preventDefault();
         const str = "You have unsaved changes. Exit anyway?";
         e.returnValue = str;
@@ -42,22 +38,21 @@ export default class App extends React.Component {
   }
 
   render() {
-    return <React.Fragment>
+    return (
       <ProjectCtx.Provider stateRef={this}>
         <SaveCtx.Provider stateRef={this}>
           <NotificationCtx.Provider stateRef={this}>
             <NotificationList />
-            <BrowserRouter
-              basename="/app/story">
+            <BrowserRouter basename="/app/story">
               <Switch>
-                <Route path="/editor" component={Editor} />
-                <Route path="/player" component={Player} />
+                <Route component={Editor} path="/editor" />
+                <Route component={Player} path="/player" />
                 <Redirect from="/" to="/editor" />
               </Switch>
             </BrowserRouter>
           </NotificationCtx.Provider>
         </SaveCtx.Provider>
       </ProjectCtx.Provider>
-    </React.Fragment>;
+    );
   }
 }

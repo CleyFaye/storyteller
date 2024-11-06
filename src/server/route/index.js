@@ -1,6 +1,7 @@
 import express from "express";
-import api from "./api";
-import app from "./app";
+
+import api from "./api/index.js";
+import app from "./app.js";
 
 const router = express.Router();
 

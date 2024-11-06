@@ -1,5 +1,6 @@
 import express from "express";
-import {APIHandler} from "../../../util/promise";
+
+import {APIHandler} from "../../../util/promise.js";
 
 const router = express.Router();
 

@@ -1,10 +1,12 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import {Redirect} from "react-router-dom";
-import ProjectCtx from "../context/project";
-import NotificationCtx from "../context/notification";
-import {notificationEnum} from "../service/notification";
-import Basic from "./player/basic";
+
+import NotificationCtx from "../context/notification.js";
+import ProjectCtx from "../context/project.js";
+import {notificationEnum} from "../service/notification.js";
+
+import Basic from "./player/basic.js";
 
 /** Display the story player */
 class Player extends React.Component {
@@ -15,8 +17,7 @@ class Player extends React.Component {
   }
 
   render() {
-    if (this.props.projectCtx.needSave()
-      || !this.props.projectCtx.isOpen()) {
+    if (this.props.projectCtx.needSave() || !this.props.projectCtx.isOpen()) {
       return <Redirect to="/editor/welcome" />;
     }
     return <Basic />;
@@ -27,8 +28,4 @@ Player.propTypes = {
   notificationCtx: PropTypes.object,
 };
 
-export default ProjectCtx.withCtx(
-  NotificationCtx.withCtx(
-    Player
-  )
-);
+export default ProjectCtx.withCtx(NotificationCtx.withCtx(Player));

@@ -1,8 +1,7 @@
-import {apiReply} from "./api";
-import {apiError} from "./api";
+import {apiReply, apiError} from "./api.js";
 
 /** Convert a promise into an express handler.
- * 
+ *
  * @param {function(req, res): Promise} promiseFunc
  * A function to handle the operation. This function must return a promise.
  * The return value (from the promise resolving) can be:
@@ -13,25 +12,30 @@ import {apiError} from "./api";
  * - An object, in which case res.json() will be called on it
  * If either the function or the promise reject (or throws), the error is passed
  * down the handlers chain.
- * 
+ *
  * @return {function}
  * The express handler.
  */
-export const promiseHandler = promiseFunc => (req, res, next) => {
-  promiseFunc(req, res).then(result => {
-    if (result === undefined) {
-      next();
-    } else if (result !== null) {
-      res.json(result);
+export const promiseHandler = (promiseFunc) => (req, res, next) => {
+  (async () => {
+    try {
+      const handlerRes = await promiseFunc(req, res);
+      if (handlerRes === undefined) {
+        next();
+      } else if (handlerRes !== null) {
+        res.json(handlerRes);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      next(error);
     }
-  }).catch(error => {
-    console.error(error);
-    next(error);
-  });
+    // eslint-disable-next-line promise/prefer-await-to-then
+  })().catch(() => {});
 };
 
 /** API handler as promise.
- * 
+ *
  * Same as promiseHandler, but the return value is treated differently:
  * - If the promise fail, the request handling still stops here, an API error
  *   value is returned.
@@ -39,20 +43,16 @@ export const promiseHandler = promiseFunc => (req, res, next) => {
  * - If the promise succeed with no return value, an empty reply is still
  *   constructed.
  */
-export const APIHandler = promiseFunc =>
-  promiseHandler(
-    (req, res) => promiseFunc(
-      req,
-      res
-    ).then(
-      result => apiReply(result)
-    ).catch(
-      error => {
-        res.status(500);
-        return apiError(
-          error.code === undefined ? -1 : error.code,
-          error.message === undefined ? "undefined error" : error.message
-        );
-      }
-    )
-  );
+export const APIHandler = (promiseFunc) =>
+  promiseHandler(async (req, res) => {
+    try {
+      const handlerRes = await promiseFunc(req, res);
+      return apiReply(handlerRes);
+    } catch (error) {
+      res.status(500);
+      return apiError(
+        error.code === undefined ? -1 : error.code,
+        error.message === undefined ? "undefined error" : error.message,
+      );
+    }
+  });

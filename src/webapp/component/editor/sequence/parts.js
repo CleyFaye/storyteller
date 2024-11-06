@@ -1,177 +1,177 @@
-import React from "react";
+import {
+  Button,
+  IconButton,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Typography,
+} from "@material-ui/core";
+import {
+  ArrowDownward as ArrowDownwardIcon,
+  ArrowUpward as ArrowUpwardIcon,
+  Delete as DeleteIcon,
+} from "@material-ui/icons";
 import PropTypes from "prop-types";
+import React from "react";
 import {Redirect} from "react-router-dom";
-import ProjectCtx from "../../../context/project";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import IconButton from "@material-ui/core/IconButton";
-import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddPart from "./dialog/addpart";
-import DeletePart from "./dialog/deletepart";
+
+import ProjectCtx from "../../../context/project.js";
+
+import AddPart from "./dialog/addpart.js";
+import DeletePart from "./dialog/deletepart.js";
 
 /** Display all parts */
-class Parts extends React.Component {
+class Parts extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
       addDialog: false,
-      redirectTo: null,
       deleteConfirm: null,
-    });
+      redirectTo: null,
+    };
   }
 
-  handleOpenAddDialog() {
-    this.updateState({
-      addDialog: true,
-    });
-  }
+  handleAddPart = (partDef) => {
+    this.setState({addDialog: false});
+    // eslint-disable-next-line promise/prefer-await-to-then
+    this.props.projectCtx.addPart(partDef).catch(() => {});
+  };
 
-  handleAddPart(partDef) {
-    this.updateState({
-      addDialog: false,
-    }).then(() => this.props.projectCtx.addPart(partDef));
-  }
+  handleClose = () => {
+    this.setState({addDialog: false});
+  };
 
-  renderAddDialog() {
-    return <AddPart
-      open={this.state.addDialog}
-      onClose={() => this.updateState({addDialog: false})}
-      onAdd={partDef => this.handleAddPart(partDef)} />;
-  }
+  renderAddDialog = () => (
+    <AddPart onAdd={this.handleAddPart} onClose={this.handleClose} open={this.state.addDialog} />
+  );
 
-  renderAddPartButton() {
-    return <Button
-      color="primary"
-      onClick={() => this.updateState({addDialog: true})}
-      variant="contained">
+  handleAdd = () => {
+    this.setState({addDialog: true});
+  };
+
+  renderAddPartButton = () => (
+    <Button color="primary" onClick={this.handleAdd} variant="contained">
       Add part
-    </Button>;
-  }
+    </Button>
+  );
 
-  renderMoveUpButton(id) {
-    return <IconButton
-      disabled={id <= 0}
-      onClick={() => this.props.projectCtx.movePart(id, id - 1)}>
+  renderMoveUpButton = (id) => (
+    // eslint-disable-next-line react/jsx-no-bind
+    <IconButton disabled={id <= 0} onClick={() => this.props.projectCtx.movePart(id, id - 1)}>
       <ArrowUpwardIcon />
-    </IconButton>;
-  }
+    </IconButton>
+  );
 
-  renderMoveDownButton(id) {
-    return <IconButton
-      disabled={id >= (this.props.projectCtx.parts.length - 1)}
-      onClick={() => this.props.projectCtx.movePart(id, id + 1)}>
+  renderMoveDownButton = (id) => (
+    <IconButton
+      disabled={id >= this.props.projectCtx.parts.length - 1}
+      // eslint-disable-next-line react/jsx-no-bind
+      onClick={() => this.props.projectCtx.movePart(id, id + 1)}
+    >
       <ArrowDownwardIcon />
-    </IconButton>;
-  }
+    </IconButton>
+  );
 
-  handleDeletePart(id) {
-    this.updateState({deleteConfirm: id});
-  }
+  handleDeletePart = (id) => {
+    this.setState({deleteConfirm: id});
+  };
 
-  renderDeleteButton(id) {
-    return <IconButton
-      onClick={() => this.handleDeletePart(id)}>
+  renderDeleteButton = (id) => (
+    // eslint-disable-next-line react/jsx-no-bind
+    <IconButton onClick={() => this.handleDeletePart(id)}>
       <DeleteIcon />
-    </IconButton>;
-  }
+    </IconButton>
+  );
 
-  openPart(partId) {
-    this.updateState({
+  openPart = (partId) => {
+    this.setState({
       redirectTo: `/editor/sequence/part/${partId}`,
     });
-  }
+  };
 
-  renderPartItem(part, id) {
-    if (part.type == "chapter") {
-      return <ListItem
-        key={id}
-        onClick={() => this.openPart(id)}
-        button>
-        <ListItemText primary={this.props.projectCtx.getPartTitle(id)} />
-        <ListItemSecondaryAction>
-          {this.renderMoveUpButton(id)}
-          {this.renderMoveDownButton(id)}
-          {this.renderDeleteButton(id)}
-        </ListItemSecondaryAction>
-      </ListItem>;
+  renderPartItem = (part, id) => {
+    if (part.type === "chapter") {
+      return (
+        // eslint-disable-next-line react/jsx-no-bind
+        <ListItem button key={id} onClick={() => this.openPart(id)}>
+          <ListItemText primary={this.props.projectCtx.getPartTitle(id)} />
+          <ListItemSecondaryAction>
+            {this.renderMoveUpButton(id)}
+            {this.renderMoveDownButton(id)}
+            {this.renderDeleteButton(id)}
+          </ListItemSecondaryAction>
+        </ListItem>
+      );
     }
     throw new Error(`Unknown part type: "${part.type}"`);
-  }
+  };
 
-  renderPartsItem() {
-    return this.props.projectCtx.parts.map(
-      (part, id) => this.renderPartItem(part, id));
-  }
+  renderPartsItem = () =>
+    this.props.projectCtx.parts.map((part, id) => this.renderPartItem(part, id));
 
-  renderPartsList() {
-    if (this.props.projectCtx.parts.length == 0) {
-      return <React.Fragment>
-        <Typography variant="h5">
-          This project currently have no parts.
-        </Typography>
-        {this.renderAddPartButton()}
-      </React.Fragment>;
+  renderPartsList = () => {
+    if (this.props.projectCtx.parts.length === 0) {
+      return (
+        <>
+          <Typography variant="h5">This project currently have no parts.</Typography>
+          {this.renderAddPartButton()}
+        </>
+      );
     }
-    return <React.Fragment>
-      <Typography variant="h5">
-        Available parts in this project:
-      </Typography>
-      <List>
-        {this.renderPartsItem()}
-      </List>
-      {this.renderAddPartButton()}
-    </React.Fragment>;
-  }
+    return (
+      <>
+        <Typography variant="h5">Available parts in this project:</Typography>
+        <List>{this.renderPartsItem()}</List>
+        {this.renderAddPartButton()}
+      </>
+    );
+  };
 
-  renderPartEditor() {
-    return null;
-  }
+  renderPartEditor = () => null;
 
-  handleDeleteClose() {
-    this.updateState({
+  handleDeleteClose = () => {
+    this.setState({
       deleteConfirm: null,
     });
-  }
+  };
 
-  handleDeleteConfirm() {
+  handleDeleteConfirm = () => {
     const partToDelete = this.state.deleteConfirm;
-    this.updateState({deleteConfirm: null})
-      .then(() => this.props.projectCtx.deletePart(partToDelete));
-  }
+    this.setState({deleteConfirm: null});
+    // eslint-disable-next-line promise/prefer-await-to-then
+    this.props.projectCtx.deletePart(partToDelete).catch(() => {});
+  };
 
-  renderDeleteDialog() {
-    return <DeletePart
+  renderDeleteDialog = () => (
+    <DeletePart
+      onClose={this.handleDeleteClose}
+      onDelete={this.handleDeleteConfirm}
       open={this.state.deleteConfirm !== null}
-      onClose={() => this.handleDeleteClose()}
-      onDelete={() => this.handleDeleteConfirm()}
-      partTitle={this.state.deleteConfirm !== null
-        ? this.props.projectCtx.getPartTitle(this.state.deleteConfirm)
-        : null} />;
-  }
+      partTitle={
+        this.state.deleteConfirm === null
+          ? null
+          : this.props.projectCtx.getPartTitle(this.state.deleteConfirm)
+      }
+    />
+  );
 
-  render() {
+  render = () => {
     if (!this.props.projectCtx.isOpen()) {
-      return <Typography variant="body1">
-        Loading…
-      </Typography>;
+      return <Typography variant="body1">Loading…</Typography>;
     }
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-    return <React.Fragment>
-      {this.renderDeleteDialog()}
-      {this.renderAddDialog()}
-      {this.renderPartsList()}
-      {this.renderPartEditor()}
-    </React.Fragment>;
-  }
+    return (
+      <>
+        {this.renderDeleteDialog()}
+        {this.renderAddDialog()}
+        {this.renderPartsList()}
+        {this.renderPartEditor()}
+      </>
+    );
+  };
 }
 Parts.propTypes = {
   projectCtx: PropTypes.object,

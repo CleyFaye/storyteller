@@ -1,6 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import {openPicsDirectory} from "../sdk/stasis";
+
+import {openPicsDirectory} from "../sdk/stasis.js";
 
 export default class MainMenu extends React.Component {
   constructor(props) {
@@ -13,11 +14,13 @@ export default class MainMenu extends React.Component {
   }
 
   render() {
-    return <div>
-      <div>You want to:</div>
-      <Link to="/camera">Start the app</Link>
-      <br />
-      <a onClick={this.handleOpenDirectory}>Open the picture directory</a>
-    </div>;
+    return (
+      <div>
+        <div>You want to:</div>
+        <Link to="/camera">Start the app</Link>
+        <br />
+        <a onClick={this.handleOpenDirectory}>Open the picture directory</a>
+      </div>
+    );
   }
 }

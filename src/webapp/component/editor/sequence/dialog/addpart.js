@@ -1,96 +1,84 @@
-import React from "react";
+import changeHandlerMixin from "@cley_faye/react-utils/lib/mixin/changehandler";
+import form, {resetValidation} from "@cley_faye/react-utils/lib/mixin/form.js";
+import {notEmpty} from "@cley_faye/react-utils/lib/validator/string.js";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Button,
+} from "@material-ui/core";
 import PropTypes from "prop-types";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import cb from "@cley_faye/react-utils/lib/mixin/cb";
-import form from "@cley_faye/react-utils/lib/mixin/form";
-import {notEmpty} from "@cley_faye/react-utils/lib/validator/string";
+import React from "react";
 
-class AddPart extends React.Component {
+class AddPart extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
-      partType: "chapter",
-      partTitle: "",
-    });
-    cb(this);
-    form(this, {
+    this.defaultState = {partType: "chapter", partTitle: ""};
+    this.state = {...this.defaultState};
+    this.validateForm = form(this, {
       partTitle: notEmpty("Part title can't be empty"),
     });
+    this.handleChange = changeHandlerMixin(this);
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate = (prevProps) => {
     if (this.props.open && !prevProps.open) {
-      this.resetValidation();
-    } else {
-      this.validateUpdate(prevState);
+      resetValidation(this);
     }
-  }
+  };
 
-  handleAdd() {
-    this.validateForm()
-      .then(formValid => {
-        if (!formValid) {
-          return;
-        }
-        this.cb(this.props.onAdd, {
-          type: this.state.partType,
-          title: this.state.partTitle,
-        });
+  handleAdd = () => {
+    (async () => {
+      const formValid = await this.validateForm();
+      if (!formValid) return;
+      this.props.onAdd?.({
+        type: this.state.partType,
+        title: this.state.partTitle,
       });
-  }
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
+  };
 
-  handleClose() {
-    this.resetState();
-    this.cb(this.props.onClose);
-  }
+  handleClose = () => {
+    this.setState({...this.defaultState});
+    this.props.onClose?.();
+  };
 
-  render() {
-    return <Dialog 
-      open={this.props.open}
-      onClose={() => this.handleClose()}>
+  render = () => (
+    <Dialog onClose={this.handleClose} open={this.props.open}>
       <DialogTitle>Add part</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          Add a new part to this project.
-        </DialogContentText>
+        <DialogContentText>Add a new part to this project.</DialogContentText>
         <TextField
           autoFocus
-          variant="filled"
-          label="Title"
           error={this.state.partTitleError !== null}
+          fullWidth
           helperText={this.state.partTitleError}
+          label="Title"
+          name="partTitle"
+          onChange={this.handleChange}
           value={this.state.partTitle}
-          onChange={this.changeHandler("partTitle")}
-          fullWidth />
+          variant="filled"
+        />
       </DialogContent>
       <DialogActions>
-        <Button
-          color="primary"
-          onClick={() => this.handleClose()}>
-            Cancel
+        <Button color="primary" onClick={this.handleClose}>
+          Cancel
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => this.handleAdd()}>
-            Add part
+        <Button color="primary" onClick={this.handleAdd} variant="contained">
+          Add part
         </Button>
       </DialogActions>
-    </Dialog>;
-
-  }
+    </Dialog>
+  );
 }
 AddPart.propTypes = {
-  open: PropTypes.bool,
-  onClose: PropTypes.func,
   onAdd: PropTypes.func,
+  onClose: PropTypes.func,
+  open: PropTypes.bool,
 };
 
 export default AddPart;

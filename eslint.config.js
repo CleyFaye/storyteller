@@ -1,3 +1,3 @@
 import eslintConfig from "@keeex/eslint-config";
 
-export default await eslintConfig({typescript: false, mocha: false, react: true});
+export default await eslintConfig({typescript: false, mocha: false, react: true, ignores: ["dist"]});

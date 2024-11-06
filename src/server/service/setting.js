@@ -1,12 +1,11 @@
-import {readJSON} from "fs-extra";
-import {writeJSON} from "fs-extra";
+import {readJSON, writeJSON} from "fs-extra";
 
 const configPath = "./settings.json";
 
-const loadConfig = () => readJSON(configPath)
-  .catch(() => ({}))
-  .then(fileConfig => Object.assign(
-    {
+const loadConfig = () =>
+  readJSON(configPath)
+    .catch(() => ({}))
+    .then((fileConfig) => ({
       printerName: "",
       binPath: "",
       duplex: true,
@@ -16,17 +15,13 @@ const loadConfig = () => readJSON(configPath)
       pdfFontBold: false,
       pdfFontItalic: false,
       pdfFontSize: 14,
-    },
-    fileConfig
-  ));
+      ...fileConfig,
+    }));
 
-const saveConfig = settings => loadConfig()
-  .then(
-    initialConfig => Object.assign(
-      initialConfig,
-      settings
-    )
-  ).then(finalConfig => writeJSON(configPath, finalConfig));
+const saveConfig = (settings) =>
+  loadConfig()
+    .then((initialConfig) => Object.assign(initialConfig, settings))
+    .then((finalConfig) => writeJSON(configPath, finalConfig));
 
 export const getAll = () => loadConfig();
-export const setAll = settings => saveConfig(settings);
+export const setAll = (settings) => saveConfig(settings);

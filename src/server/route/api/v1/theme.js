@@ -1,6 +1,7 @@
 import express from "express";
-import {APIHandler} from "../../../util/promise";
-import {list as listThemes} from "../../../service/theme";
+
+import {list as listThemes} from "../../../service/theme.js";
+import {APIHandler} from "../../../util/promise.js";
 
 const router = express.Router();
 

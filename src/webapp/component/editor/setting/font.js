@@ -1,127 +1,152 @@
+import changeHandlerMixin from "@cley_faye/react-utils/lib/mixin/changehandler.js";
+import {
+  TextField,
+  Typography,
+  Slider,
+  Button,
+  FormControlLabel,
+  Checkbox,
+  Box,
+} from "@material-ui/core";
 import React from "react";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Slider from "@material-ui/core/Slider";
-import Button from "@material-ui/core/Button";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
-import Box from "@material-ui/core/Box";
-import {getAll} from "../../../service/setting";
-import {setAll} from "../../../service/setting";
-import {list as listFonts} from "../../../service/font";
 
-class Font extends React.Component {
+import {list as listFonts} from "../../../service/font.js";
+import {getAll, setAll} from "../../../service/setting.js";
+
+const getAria = (value) => value.toString();
+
+class Font extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
+      fonts: null,
+      loading: true,
       pdfFont: "",
       pdfFontBold: false,
       pdfFontItalic: false,
       pdfFontSize: 0,
-      fonts: null,
-      loading: true,
-    });
-    changeHandler(this);
+    };
+    this.handleChange = changeHandlerMixin(this);
   }
 
-  componentDidMount() {
-    getAll()
-      .then(remoteConfig => this.updateState(remoteConfig))
-      .then(() => listFonts())
-      .then(fonts => this.updateState({
-        loading: false,
-        fonts,
-      }));
-  }
+  componentDidMount = () => {
+    (async () => {
+      const remoteConfig = await getAll();
+      const fonts = await listFonts();
+      this.setState({...remoteConfig, fonts, loading: false});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
+  };
 
-  handleSave() {
-    this.updateState({loading: true})
-      .then(() => setAll({
+  handleFontChange = (_, pdfFontSize) => {
+    this.setState({pdfFontSize});
+  };
+
+  handleBoldChange = (e) => this.setState({pdfFontBold: e.target.checked});
+
+  handleItalicChange = (e) => this.setState({pdfFontItalic: e.target.checked});
+
+  handleSave = () => {
+    this.setState({loading: true});
+    (async () => {
+      await setAll({
         pdfFont: this.state.pdfFont,
         pdfFontBold: this.state.pdfFontBold,
         pdfFontItalic: this.state.pdfFontItalic,
         pdfFontSize: this.state.pdfFontSize,
-      }))
-      .then(() => this.updateState({loading: false}));
-  }
+      });
+      this.setState({loading: false});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
+  };
 
-  _renderSaveButton() {
-    return <Button
-      color="primary"
-      onClick={() => this.handleSave()}>
+  _renderSaveButton = () => (
+    <Button color="primary" onClick={this.handleSave}>
       Save settings
-    </Button>;
-  }
+    </Button>
+  );
 
-  renderFontList() {
+  renderFontList = () => {
     if (this.state.fonts === null) {
       return;
     }
-    return <React.Fragment>
-      <br />
-      {this.state.fonts.map(fontName => 
-        <Button
-          key={fontName}
-          color="secondary"
-          onClick={() => this.updateState({pdfFont: fontName})}>
-          {fontName}
-        </Button>
-      )}
-      <br />
-    </React.Fragment>;
-  }
+    return (
+      <>
+        <br />
+        {this.state.fonts.map((fontName) => (
+          <Button
+            color="secondary"
+            key={fontName}
+            // eslint-disable-next-line react/jsx-no-bind
+            onClick={() => this.setState({pdfFont: fontName})}
+          >
+            {fontName}
+          </Button>
+        ))}
+        <br />
+      </>
+    );
+  };
 
-  render() {
+  render = () => {
     if (this.state.loading) {
       return <Typography variant="h4">Loading…</Typography>;
     }
-    return <React.Fragment>
-      {this._renderSaveButton()}
-      <Box>
-        <TextField
-          variant="filled"
-          label="Font name"
-          disabled
-          value={this.state.pdfFont}
-          onChange={this.changeHandler("pdfFont")}
-          fullWidth />
-        {this.renderFontList()}
-        <br />
-        <p>
-          Size of the font
-        </p>
-        <Slider
-          defaultValue={this.state.pdfFontSize}
-          getAriaValueText={value => value.toString()}
-          valueLabelDisplay="auto"
-          onChange={(_, pdfFontSize) => this.updateState({pdfFontSize})}
-          step={1}
-          marks
-          min={4}
-          max={150}
-        />
-        <br />
-        <FormControlLabel
-          control={<Checkbox
-            checked={this.state.pdfFontBold}
-            onChange={e => this.updateState({pdfFontBold: e.target.checked})}
-            value="bold"
-            color="primary" />}
-          label="Bold" />
-        <br />
-        <FormControlLabel
-          control={<Checkbox
-            checked={this.state.pdfFontItalic}
-            onChange={e => this.updateState({pdfFontItalic: e.target.checked})}
-            value="italic"
-            color="primary" />}
-          label="Italic" />
-      </Box>
-      {this._renderSaveButton()}
-    </React.Fragment>;
-  }
+    return (
+      <>
+        {this._renderSaveButton()}
+        <Box>
+          <TextField
+            disabled
+            fullWidth
+            label="Font name"
+            name="pdfFont"
+            onChange={this.handleChange}
+            value={this.state.pdfFont}
+            variant="filled"
+          />
+          {this.renderFontList()}
+          <br />
+          <p>Size of the font</p>
+          <Slider
+            defaultValue={this.state.pdfFontSize}
+            getAriaValueText={getAria}
+            marks
+            max={150}
+            min={4}
+            onChange={this.handleFontChange}
+            step={1}
+            valueLabelDisplay="auto"
+          />
+          <br />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={this.state.pdfFontBold}
+                color="primary"
+                onChange={this.handleBoldChange}
+                value="bold"
+              />
+            }
+            label="Bold"
+          />
+          <br />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={this.state.pdfFontItalic}
+                color="primary"
+                onChange={this.handleItalicChange}
+                value="italic"
+              />
+            }
+            label="Italic"
+          />
+        </Box>
+        {this._renderSaveButton()}
+      </>
+    );
+  };
 }
 
 export default Font;

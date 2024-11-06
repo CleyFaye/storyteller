@@ -1,68 +1,61 @@
-import React from "react";
+/* eslint-disable max-classes-per-file */
+import {AppBar, Tabs, Tab, Typography, Box} from "@material-ui/core";
 import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import exState from "@cley_faye/react-utils/lib/mixin/exstate";
-import changeHandler from "@cley_faye/react-utils/lib/mixin/changehandler";
-import Import from "./filemanager/import";
-import Export from "./filemanager/export";
-import ProjectCtx from "../../context/project";
+import React from "react";
 
-class FileManagerPanel extends React.Component {
-  render() {
-    return <Typography
-      component="div"
-      role="tabpanel"
-      hidden={this.props.value !== this.props.index}>
+import ProjectCtx from "../../context/project.js";
+
+import Export from "./filemanager/export.js";
+import Import from "./filemanager/import.js";
+
+class FileManagerPanel extends React.PureComponent {
+  render = () => (
+    <Typography component="div" hidden={this.props.value !== this.props.index} role="tabpanel">
       <Box p={3}>{this.props.children}</Box>
-    </Typography>;
-  }
+    </Typography>
+  );
 }
 FileManagerPanel.propTypes = {
-  value: PropTypes.any,
-  index: PropTypes.any,
   children: PropTypes.node,
+  index: PropTypes.any,
+  value: PropTypes.any,
 };
 
-class FileManager extends React.Component {
+class FileManager extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {
+    this.state = {
       value: 0,
-    });
-    changeHandler(this);
+    };
   }
 
-  renderExportPanel() {
+  renderExportPanel = () => {
     if (this.props.projectCtx.isOpen()) {
       return <Export />;
     }
-    return <Typography variant="h4">
-      No project open.
-    </Typography>;
-  }
+    return <Typography variant="h4">No project open.</Typography>;
+  };
 
-  render() {
-    return <React.Fragment>
+  handleChange = (_, value) => {
+    this.setState({value});
+  };
+
+  render = () => (
+    <>
       <AppBar position="static">
-        <Tabs
-          value={this.state.value}
-          onChange={(_, value) => this.updateState({value})}>
+        <Tabs onChange={this.handleChange} value={this.state.value}>
           <Tab label="Import" />
           <Tab label="Export" />
         </Tabs>
       </AppBar>
-      <FileManagerPanel value={this.state.value} index={0}>
+      <FileManagerPanel index={0} value={this.state.value}>
         <Import />
       </FileManagerPanel>
-      <FileManagerPanel value={this.state.value} index={1}>
+      <FileManagerPanel index={1} value={this.state.value}>
         {this.renderExportPanel()}
       </FileManagerPanel>
-    </React.Fragment>;
-  }
+    </>
+  );
 }
 FileManager.propTypes = {
   projectCtx: PropTypes.object,
