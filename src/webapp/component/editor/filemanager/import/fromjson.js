@@ -121,16 +121,9 @@ class FromJSON extends React.PureComponent {
   };
 
   handleConfirmErase = () => {
-    this.setState({state: State.LOADING});
-    (async () => {
-      await this.props.projectCtx.newProject({title: this.state.title});
-      await this.state.loadedData.reduce(
-        (acc, cur) => acc.then(() => this.props.projectCtx.addPart(cur)),
-        Promise.resolve(),
-      );
-      this.setState({state: State.DONE});
-      // eslint-disable-next-line promise/prefer-await-to-then
-    })().catch((error) => this.setState({error: error ? error.toString() : "Unknown error"}));
+    this.props.projectCtx.newProject({title: this.state.title});
+    this.state.loadedData.forEach((cur) => this.props.projectCtx.addPart(cur));
+    this.setState({state: State.DONE});
   };
 
   renderFileField = () => (

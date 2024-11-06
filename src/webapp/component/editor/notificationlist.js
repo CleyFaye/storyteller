@@ -15,7 +15,7 @@ class NotificationList extends React.PureComponent {
         key={key}
         message={label}
         // eslint-disable-next-line react/jsx-no-bind
-        onClose={() => this.props.notificationCtx.update({[key]: false})}
+        onClose={() => this.props.notificationCtx.setContext({[key]: false})}
         open={this.props.notificationCtx[key]}
       />
     );

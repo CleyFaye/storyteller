@@ -29,7 +29,7 @@ import {
  * Resolve when done
  */
 export const newProject = (ctx, projectSettings) =>
-  ctx.update({
+  ctx.setContext({
     parts: [],
     saved: false,
     title: projectSettings.title,
@@ -47,7 +47,7 @@ export const newProject = (ctx, projectSettings) =>
  * Resolve when done
  */
 const loadProjectV1 = (projectCtx, projectData) =>
-  projectCtx.update({
+  projectCtx.setContext({
     parts: projectData.parts,
     saved: true,
     title: projectData.title,
@@ -78,7 +78,7 @@ export const loadProject = async (ctx, projectName) => {
 const realSaveProject = async (projectCtx) => {
   const projectData = {parts: projectCtx.parts, title: projectCtx.title, version: 1};
   await apiSaveProject(projectCtx.title, projectData);
-  return projectCtx.update({saved: true});
+  projectCtx.setContext({saved: true});
 };
 
 /** Save the current project
@@ -123,7 +123,7 @@ export const listExisting = () => apiListExisting();
  * Bound to context.
  */
 export const addPart = (ctx, partDef) =>
-  ctx.update({
+  ctx.setContext({
     parts: ctx.parts.concat([buildNewPart(partDef)]),
     saved: false,
   });
@@ -143,7 +143,7 @@ export const addPart = (ctx, partDef) =>
 export const movePart = (ctx, from, to) => {
   const parts = ctx.parts.slice();
   parts.splice(to, 0, parts.splice(from, 1)[0]);
-  return ctx.update({
+  ctx.setContext({
     parts,
     saved: false,
   });
@@ -161,7 +161,7 @@ export const movePart = (ctx, from, to) => {
 export const deletePart = (ctx, partId) => {
   const parts = ctx.parts.slice();
   parts.splice(partId, 1);
-  return ctx.update({parts, saved: false});
+  ctx.setContext({parts, saved: false});
 };
 
 /** Extract data from a part and return the useful fields
@@ -192,7 +192,7 @@ export const loadPartIntoContext = (ctx, partId) => loadPartIntoContextRaw(ctx.p
 export const savePartFromContext = (ctx, partId, contextData) => {
   const parts = ctx.parts.slice();
   parts[partId] = savePartFromContextRaw(contextData);
-  return ctx.update({
+  ctx.setContext({
     parts,
     saved: false,
   });

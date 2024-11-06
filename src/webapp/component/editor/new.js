@@ -70,11 +70,8 @@ class EditorNew extends React.PureComponent {
   /** Either the project is a new one, or the user confirmed erasing the old one
    */
   handleConfirmErase = () => {
-    (async () => {
-      await this.props.projectCtx.newProject({title: this.state.title});
-      this.setState({step: steps.END});
-      // eslint-disable-next-line promise/prefer-await-to-then
-    })().catch(() => {});
+    this.props.projectCtx.newProject({title: this.state.title});
+    this.setState({step: steps.END});
   };
 
   handleDialogClose = () => this.setState({step: steps.END});

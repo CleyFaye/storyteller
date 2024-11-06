@@ -40,7 +40,7 @@ export const notificationEnum = {
 export const show = (ctx, enumValue) =>
   Object.keys(notificationEnum).forEach((key) => {
     if (notificationEnum[key].id === enumValue.id) {
-      ctx.update({[key]: true});
+      ctx.setContext({[key]: true});
     }
   });
 

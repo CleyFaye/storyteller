@@ -15,7 +15,7 @@
 export const registerEditor = (ctx, editor) => {
   const activeEditors = ctx.activeEditors.slice();
   activeEditors.push(editor);
-  return ctx.update({activeEditors});
+  ctx.setContext({activeEditors});
 };
 
 /** Unregister an editor.
@@ -25,7 +25,7 @@ export const registerEditor = (ctx, editor) => {
 export const unregisterEditor = (ctx, editor) => {
   const activeEditors = ctx.activeEditors.slice();
   activeEditors.splice(activeEditors.indexOf(editor), 1);
-  return ctx.update({activeEditors});
+  ctx.setContext({activeEditors});
 };
 
 /** Perform a save on all editors that need saving
@@ -46,9 +46,8 @@ export const save = (ctx) =>
 export const updateSaveState = (ctx) => {
   const needSave = ctx.activeEditors.reduce((acc, cur) => acc || cur.needSave(), false);
   if (needSave !== ctx.needSave) {
-    return ctx.update({needSave});
+    ctx.setContext({needSave});
   }
-  return Promise.resolve();
 };
 
 export const contextFunctions = {

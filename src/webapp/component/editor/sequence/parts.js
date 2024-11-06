@@ -34,8 +34,7 @@ class Parts extends React.PureComponent {
 
   handleAddPart = (partDef) => {
     this.setState({addDialog: false});
-    // eslint-disable-next-line promise/prefer-await-to-then
-    this.props.projectCtx.addPart(partDef).catch(() => {});
+    this.props.projectCtx.addPart(partDef);
   };
 
   handleClose = () => {
@@ -139,8 +138,7 @@ class Parts extends React.PureComponent {
   handleDeleteConfirm = () => {
     const partToDelete = this.state.deleteConfirm;
     this.setState({deleteConfirm: null});
-    // eslint-disable-next-line promise/prefer-await-to-then
-    this.props.projectCtx.deletePart(partToDelete).catch(() => {});
+    this.props.projectCtx.deletePart(partToDelete);
   };
 
   renderDeleteDialog = () => (

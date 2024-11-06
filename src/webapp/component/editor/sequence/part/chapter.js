@@ -72,10 +72,10 @@ class Chapter extends React.PureComponent {
   };
 
   /** Save request, form is valid */
-  doSave = async () => {
-    await this.props.projectCtx.savePartFromContext(this.props.partId, this.state);
+  doSave = () => {
+    this.props.projectCtx.savePartFromContext(this.props.partId, this.state);
     this.props.notificationCtx.show(notificationEnum.partSaved);
-    await this.props.saveCtx.updateSaveState();
+    this.props.saveCtx.updateSaveState();
   };
 
   loadPart = () => {
