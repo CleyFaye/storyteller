@@ -21,14 +21,14 @@ class Printer extends React.PureComponent {
     this.handleChange = changeHandlerMixin(this);
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     (async () => {
       const remoteConfig = await getAll();
       const printers = await listPrinters();
       this.setState({...remoteConfig, loading: false, printers});
       // eslint-disable-next-line promise/prefer-await-to-then
     })().catch(() => {});
-  }
+  };
 
   handleSave = () => {
     this.setState({loading: true})(async () => {

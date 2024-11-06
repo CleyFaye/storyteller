@@ -2,26 +2,32 @@ import {readJSON, writeJSON} from "fs-extra";
 
 const configPath = "./settings.json";
 
-const loadConfig = () =>
-  readJSON(configPath)
-    .catch(() => ({}))
-    .then((fileConfig) => ({
-      printerName: "",
-      binPath: "",
-      duplex: true,
-      theme: "steamy",
-      uiScale: 20,
-      pdfFont: "TimesRoman",
-      pdfFontBold: false,
-      pdfFontItalic: false,
-      pdfFontSize: 14,
-      ...fileConfig,
-    }));
+const defaultConfig = {
+  binPath: "",
+  duplex: true,
+  pdfFont: "TimesRoman",
+  pdfFontBold: false,
+  pdfFontItalic: false,
+  pdfFontSize: 14,
+  printerName: "",
+  theme: "steamy",
+  uiScale: 20,
+};
 
-const saveConfig = (settings) =>
-  loadConfig()
-    .then((initialConfig) => Object.assign(initialConfig, settings))
-    .then((finalConfig) => writeJSON(configPath, finalConfig));
+const loadConfig = async () => {
+  try {
+    const config = await readJSON(configPath);
+    return {...defaultConfig, ...config};
+  } catch {
+    return {...defaultConfig};
+  }
+};
+
+const saveConfig = async (settings) => {
+  const initialConfig = await loadConfig();
+  const finalConfig = {...initialConfig, ...settings};
+  await writeJSON(configPath, finalConfig);
+};
 
 export const getAll = () => loadConfig();
 export const setAll = (settings) => saveConfig(settings);

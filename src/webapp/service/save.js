@@ -45,7 +45,7 @@ export const save = (ctx) =>
 /** Update the "save" status for all editors */
 export const updateSaveState = (ctx) => {
   const needSave = ctx.activeEditors.reduce((acc, cur) => acc || cur.needSave(), false);
-  if (needSave != ctx.needSave) {
+  if (needSave !== ctx.needSave) {
     return ctx.update({needSave});
   }
   return Promise.resolve();
@@ -53,7 +53,7 @@ export const updateSaveState = (ctx) => {
 
 export const contextFunctions = {
   registerEditor,
-  unregisterEditor,
   save,
+  unregisterEditor,
   updateSaveState,
 };

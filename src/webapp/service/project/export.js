@@ -1,12 +1,8 @@
-/** Return a JSON-serializable object for the exported project
- *
- * @return {Promise}
- */
-export const exportProject = (projectCtx) =>
-  new Promise((resolve) => {
-    const result = {};
-    result.magicVersion = 2;
-    result.title = projectCtx.title;
-    result.parts = projectCtx.parts.map((_, id) => projectCtx.exportPart(id));
-    resolve(result);
-  });
+import {magicVersion2} from "../setting.js";
+
+/** Return a JSON-serializable object for the exported project */
+export const exportProject = (projectCtx) => ({
+  magicVersion: magicVersion2,
+  parts: projectCtx.parts.map((_, id) => projectCtx.exportPart(id)),
+  title: projectCtx.title,
+});

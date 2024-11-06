@@ -8,17 +8,17 @@ import NotificationCtx from "./context/notification.js";
 import ProjectCtx from "./context/project.js";
 import SaveCtx from "./context/save.js";
 
-export default class App extends React.Component {
+export default class App extends React.PureComponent {
   constructor(props) {
     super(props);
-    exState(this, {});
+    this.state = {};
     ProjectCtx.init(this);
     SaveCtx.init(this);
     NotificationCtx.init(this);
     this.registerExitHandler();
   }
 
-  registerExitHandler() {
+  registerExitHandler = () => {
     this._registeredExitHandler = (e) => {
       if (this.state.projectCtx.needSave() || this.state.saveCtx.needSave) {
         e.preventDefault();
@@ -27,15 +27,15 @@ export default class App extends React.Component {
         return str;
       }
     };
-  }
+  };
 
-  componentDidMount() {
+  componentDidMount = () => {
     window.addEventListener("beforeunload", this._registeredExitHandler);
-  }
+  };
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     window.removeEventListener("beforeunload", this._registeredExitHandler);
-  }
+  };
 
   render() {
     return (

@@ -3,24 +3,22 @@ import {Link} from "react-router-dom";
 
 import {openPicsDirectory} from "../sdk/stasis.js";
 
-export default class MainMenu extends React.Component {
+export default class MainMenu extends React.PureComponent {
   constructor(props) {
     super(props);
     this.handleOpenDirectory = this.handleOpenDirectory.bind(this);
   }
 
-  handleOpenDirectory() {
+  static handleOpenDirectory = () => {
     openPicsDirectory();
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <div>You want to:</div>
-        <Link to="/camera">Start the app</Link>
-        <br />
-        <a onClick={this.handleOpenDirectory}>Open the picture directory</a>
-      </div>
-    );
-  }
+  render = () => (
+    <div>
+      <div>You want to:</div>
+      <Link to="/camera">Start the app</Link>
+      <br />
+      <a onClick={MainMenu.handleOpenDirectory}>Open the picture directory</a>
+    </div>
+  );
 }

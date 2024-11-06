@@ -21,7 +21,7 @@ class Sequence extends React.PureComponent {
     }
   };
 
-  render() {
+  render = () => {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
@@ -32,7 +32,7 @@ class Sequence extends React.PureComponent {
         <Redirect to="/editor/sequence/parts" />
       </Switch>
     );
-  }
+  };
 }
 Sequence.propTypes = {
   projectCtx: PropTypes.object,

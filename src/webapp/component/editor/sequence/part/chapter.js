@@ -13,6 +13,7 @@ import SaveCtx from "../../../../context/save.js";
 
 import {notificationEnum} from "../../../../service/notification.js";
 
+/* eslint-disable no-magic-numbers */
 const styles = (theme) => ({
   fab: {
     bottom: theme.spacing(2),
@@ -23,6 +24,9 @@ const styles = (theme) => ({
     padding: theme.spacing(2),
   },
 });
+/* eslint-enable no-magic-numbers */
+
+const HIDE_TOP_BUTTON_UNDER = 4;
 
 class Chapter extends React.PureComponent {
   constructor(props) {
@@ -122,7 +126,7 @@ class Chapter extends React.PureComponent {
   };
 
   renderAddVariantButton = (topButton) => {
-    if (topButton && this.state.partVariants.length < 4) {
+    if (topButton && this.state.partVariants.length < HIDE_TOP_BUTTON_UNDER) {
       return null;
     }
     return (

@@ -1,8 +1,8 @@
-const loadGruntTasks = require("load-grunt-tasks");
 const {reactApp} = require("@cley_faye/boilerplate/grunt");
 const {reactAppOptionsHelper} = require("@cley_faye/boilerplate/grunt");
+const loadGruntTasks = require("load-grunt-tasks");
 
-module.exports = grunt => {
+module.exports = (grunt) => {
   loadGruntTasks(grunt);
   const gruntConfig = {
     clean: {
@@ -12,13 +12,10 @@ module.exports = grunt => {
       third: {
         files: [
           {
-            expand: true,
             cwd: "node_modules/typeface-roboto",
-            src: [
-              "index.css",
-              "files/**/*",
-            ],
             dest: "dist/storyteller/third/roboto",
+            expand: true,
+            src: ["index.css", "files/**/*"],
           },
         ],
       },
@@ -27,17 +24,12 @@ module.exports = grunt => {
   const buildTasks = reactApp(
     gruntConfig,
     "storyteller",
-    reactAppOptionsHelper(
-      {
-        production: false,
-      }
-    )
+    reactAppOptionsHelper({
+      production: false,
+    }),
   );
   grunt.initConfig(gruntConfig);
-  
-  grunt.registerTask("build", "Build the project's webapp", [
-    "copy:third",
-    ...buildTasks,
-  ]);
+
+  grunt.registerTask("build", "Build the project's webapp", ["copy:third", ...buildTasks]);
   grunt.registerTask("default", ["build"]);
 };

@@ -4,8 +4,8 @@ import React from "react";
 import ProjectCtx from "../../context/project.js";
 
 /** Display the project title */
-class Title extends React.Component {
-  render() {
+class Title extends React.PureComponent {
+  render = () => {
     if (this.props.prefix && this.props.projectCtx.isOpen()) {
       return `${this.props.prefix} - ${this.props.projectCtx.title}`;
     } else if (this.props.prefix) {
@@ -14,7 +14,7 @@ class Title extends React.Component {
       return `${this.props.projectCtx.title}`;
     }
     return null;
-  }
+  };
 }
 Title.propTypes = {
   projectCtx: PropTypes.object,

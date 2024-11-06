@@ -1,3 +1,5 @@
+import HttpCodes from "@cley_faye/http-codes-consts";
+
 import {apiReply, apiError} from "./api.js";
 
 /** Convert a promise into an express handler.
@@ -49,7 +51,7 @@ export const APIHandler = (promiseFunc) =>
       const handlerRes = await promiseFunc(req, res);
       return apiReply(handlerRes);
     } catch (error) {
-      res.status(500);
+      res.status(HttpCodes.INTERNAL_SERVER_ERROR);
       return apiError(
         error.code === undefined ? -1 : error.code,
         error.message === undefined ? "undefined error" : error.message,

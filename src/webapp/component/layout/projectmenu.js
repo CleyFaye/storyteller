@@ -50,9 +50,9 @@ const openProjectEntries = [
   loadProjectEntry,
   importProjectEntry,
   {
+    action: "save",
     icon: SaveIcon,
     label: "Save",
-    action: "save",
   },
   {
     icon: PlayCircleOutline,
@@ -61,36 +61,34 @@ const openProjectEntries = [
   },
 ];
 
-class ProjectMenu extends React.Component {
-  renderMenu() {
+class ProjectMenu extends React.PureComponent {
+  renderMenu = () => {
     if (!this.props.projectCtx.isOpen()) {
       return buildMenuList(noProjectEntries, (action) => this.runAction(action));
     }
     return buildMenuList(openProjectEntries, (action) => this.runAction(action));
-  }
+  };
 
   /** Run an action */
-  runAction(actionName) {
+  runAction = (actionName) => {
     dispatchAction(
       actionName,
       this.props.projectCtx,
       this.props.saveCtx,
       this.props.notificationCtx,
     );
-  }
+  };
 
-  render() {
-    return (
-      <>
-        <Divider />
-        <List>{this.renderMenu()}</List>
-      </>
-    );
-  }
+  render = () => (
+    <>
+      <Divider />
+      <List>{this.renderMenu()}</List>
+    </>
+  );
 }
 ProjectMenu.propTypes = {
-  projectCtx: PropTypes.object,
   notificationCtx: PropTypes.object,
+  projectCtx: PropTypes.object,
   saveCtx: PropTypes.object,
 };
 

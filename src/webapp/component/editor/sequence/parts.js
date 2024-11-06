@@ -128,7 +128,7 @@ class Parts extends React.PureComponent {
     );
   };
 
-  renderPartEditor = () => null;
+  static renderPartEditor = () => null;
 
   handleDeleteClose = () => {
     this.setState({
@@ -168,7 +168,7 @@ class Parts extends React.PureComponent {
         {this.renderDeleteDialog()}
         {this.renderAddDialog()}
         {this.renderPartsList()}
-        {this.renderPartEditor()}
+        {Parts.renderPartEditor()}
       </>
     );
   };

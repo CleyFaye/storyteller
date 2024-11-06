@@ -11,18 +11,18 @@ import SaveCtx from "../../context/save.js";
 import {save as saveAction} from "../../service/action.js";
 
 /** Display the "save" button for the current project */
-class SaveButton extends React.Component {
-  handleSave() {
+class SaveButton extends React.PureComponent {
+  handleSave = () => {
     saveAction(this.props.projectCtx, this.props.saveCtx, this.props.notificationCtx);
-  }
+  };
 
-  render() {
+  render = () => {
     if (!this.props.projectCtx.isOpen()) {
       return null;
     }
     if (this.props.projectCtx.needSave() || this.props.saveCtx.needSave) {
       return (
-        <IconButton color="inherit" onClick={() => this.handleSave()}>
+        <IconButton color="inherit" onClick={this.handleSave}>
           <Badge color="secondary" variant="dot">
             <SaveIcon color={this.props.saveCtx.needSave ? "secondary" : undefined} />
           </Badge>
@@ -34,12 +34,12 @@ class SaveButton extends React.Component {
         <SaveIcon />
       </IconButton>
     );
-  }
+  };
 }
 SaveButton.propTypes = {
+  notificationCtx: PropTypes.object,
   projectCtx: PropTypes.object,
   saveCtx: PropTypes.object,
-  notificationCtx: PropTypes.object,
 };
 
 export default ProjectCtx.withCtx(NotificationCtx.withCtx(SaveCtx.withCtx(SaveButton)));

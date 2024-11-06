@@ -5,6 +5,8 @@ import React from "react";
 import {getAll, setAll} from "../../../service/setting.js";
 import {list as listThemes} from "../../../service/theme.js";
 
+const getAria = (value) => value.toString();
+
 class Theme extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -17,38 +19,34 @@ class Theme extends React.PureComponent {
     this.handleChange = changeHandlerMixin(this);
   }
 
-  componentDidMount() {
-    getAll()
-      .then((remoteConfig) => this.setState(remoteConfig))
-      .then(() => listThemes())
-      .then((themes) =>
-        this.setState({
-          loading: false,
-          themes,
-        }),
-      );
-  }
+  componentDidMount = () => {
+    (async () => {
+      const remoteConfig = await getAll();
+      const themes = await listThemes();
+      this.setState({...remoteConfig, loading: false, themes});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
+  };
 
-  handleSave() {
-    this.setState({loading: true})
-      .then(() =>
-        setAll({
-          theme: this.state.theme,
-          uiScale: this.state.uiScale,
-        }),
-      )
-      .then(() => this.setState({loading: false}));
-  }
+  handleSave = () => {
+    this.setState({loading: true});
+    (async () => {
+      await setAll({
+        theme: this.state.theme,
+        uiScale: this.state.uiScale,
+      });
+      this.setState({loading: false});
+      // eslint-disable-next-line promise/prefer-await-to-then
+    })().catch(() => {});
+  };
 
-  _renderSaveButton() {
-    return (
-      <Button color="primary" onClick={() => this.handleSave()}>
-        Save settings
-      </Button>
-    );
-  }
+  _renderSaveButton = () => (
+    <Button color="primary" onClick={this.handleSave}>
+      Save settings
+    </Button>
+  );
 
-  renderThemeList() {
+  renderThemeList = () => {
     if (this.state.themes === null) {
       return;
     }
@@ -59,6 +57,7 @@ class Theme extends React.PureComponent {
           <Button
             color="secondary"
             key={themeName}
+            // eslint-disable-next-line react/jsx-no-bind
             onClick={() => this.setState({theme: themeName})}
           >
             {themeName}
@@ -67,9 +66,9 @@ class Theme extends React.PureComponent {
         <br />
       </>
     );
-  }
+  };
 
-  render() {
+  render = () => {
     if (this.state.loading) {
       return <Typography variant="h4">Loading…</Typography>;
     }
@@ -94,11 +93,11 @@ class Theme extends React.PureComponent {
           </p>
           <Slider
             defaultValue={this.state.uiScale}
-            getAriaValueText={(value) => value.toString()}
+            getAriaValueText={getAria}
             marks
             max={40}
             min={10}
-            onChange={(_, uiScale) => this.setState({uiScale})}
+            onChange={this.handleScaleChange}
             step={2}
             valueLabelDisplay="auto"
           />
@@ -106,7 +105,9 @@ class Theme extends React.PureComponent {
         {this._renderSaveButton()}
       </>
     );
-  }
+  };
+
+  handleScaleChange = (_, uiScale) => this.setState({uiScale});
 }
 
 export default Theme;

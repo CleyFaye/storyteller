@@ -19,29 +19,27 @@ const mainEntries = [
   },
 ];
 
-class MainMenu extends React.Component {
+class MainMenu extends React.PureComponent {
   /** Run an action */
-  runAction(actionName) {
+  runAction = (actionName) => {
     dispatchAction(
       actionName,
       this.props.projectCtx,
       this.props.saveCtx,
       this.props.notificationCtx,
     );
-  }
+  };
 
-  render() {
-    return (
-      <>
-        <Divider />
-        <List>{buildMenuList(mainEntries, (action) => this.runAction(action))}</List>
-      </>
-    );
-  }
+  render = () => (
+    <>
+      <Divider />
+      <List>{buildMenuList(mainEntries, (action) => this.runAction(action))}</List>
+    </>
+  );
 }
 MainMenu.propTypes = {
-  projectCtx: PropTypes.object,
   notificationCtx: PropTypes.object,
+  projectCtx: PropTypes.object,
   saveCtx: PropTypes.object,
 };
 

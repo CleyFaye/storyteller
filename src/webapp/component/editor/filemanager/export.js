@@ -14,14 +14,10 @@ class Export extends React.PureComponent {
     if (!this.props.projectCtx.isOpen()) {
       return;
     }
-    (async () => {
-      const projectData = await this.props.projectCtx.exportProject();
-      console.log("recreate link");
-      const blob = new Blob([JSON.stringify(projectData)], {type: "application/json"});
-      const url = window.URL.createObjectURL(blob);
-      this.setState({link: url});
-      // eslint-disable-next-line promise/prefer-await-to-then
-    })().catch(() => {});
+    const projectData = this.props.projectCtx.exportProject();
+    const blob = new Blob([JSON.stringify(projectData)], {type: "application/json"});
+    const url = window.URL.createObjectURL(blob);
+    this.setState({link: url});
   };
 
   componentWillUnmount = () => {

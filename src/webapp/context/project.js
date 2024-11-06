@@ -6,9 +6,9 @@ import {contextFunctions} from "../service/project.js";
 export default createState(
   "project",
   {
-    title: null,
     parts: null,
     saved: null,
+    title: null,
   },
   contextFunctions,
 );

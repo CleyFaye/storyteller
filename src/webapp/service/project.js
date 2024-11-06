@@ -30,9 +30,9 @@ import {
  */
 export const newProject = (ctx, projectSettings) =>
   ctx.update({
-    title: projectSettings.title,
     parts: [],
     saved: false,
+    title: projectSettings.title,
   });
 
 /** Load a project from a V1 file
@@ -48,9 +48,9 @@ export const newProject = (ctx, projectSettings) =>
  */
 const loadProjectV1 = (projectCtx, projectData) =>
   projectCtx.update({
-    title: projectData.title,
     parts: projectData.parts,
     saved: true,
+    title: projectData.title,
   });
 
 /** Load a project from a name
@@ -63,18 +63,23 @@ const loadProjectV1 = (projectCtx, projectData) =>
  * @return {Promise}
  * Resolve when done
  */
-export const loadProject = (ctx, projectName) =>
-  apiLoadProject(projectName).then((projectData) => {
-    if (projectData.version === undefined) {
-      return Promise.reject(new Error("Unknown project version"));
-    }
-    switch (projectData.version) {
-      case 1:
-        return loadProjectV1(ctx, projectData);
-      default:
-        return Promise.reject(new Error("Unsupported project version"));
-    }
-  });
+export const loadProject = async (ctx, projectName) => {
+  const projectData = await apiLoadProject(projectName);
+  if (projectData.version === undefined) throw new Error("Missing project version");
+  switch (projectData.version) {
+    case 1:
+      return loadProjectV1(ctx, projectData);
+    default:
+      throw new Error("Unsupported project version");
+  }
+};
+
+/** Perform a save regardless of the project state */
+const realSaveProject = async (projectCtx) => {
+  const projectData = {parts: projectCtx.parts, title: projectCtx.title, version: 1};
+  await apiSaveProject(projectCtx.title, projectData);
+  return projectCtx.update({saved: true});
+};
 
 /** Save the current project
  *
@@ -83,22 +88,10 @@ export const loadProject = (ctx, projectName) =>
  * @return {Promise}
  * Resolve when saved
  */
-export const saveProject = (ctx) =>
-  Promise.resolve(ctx.needSave()).then((haveToSave) => {
-    if (haveToSave) {
-      return realSaveProject(ctx);
-    }
-  });
-
-/** Perform a save regardless of the project state */
-const realSaveProject = (projectCtx) =>
-  Promise.resolve({
-    version: 1,
-    title: projectCtx.title,
-    parts: projectCtx.parts,
-  })
-    .then((projectData) => apiSaveProject(projectCtx.title, projectData))
-    .then(() => projectCtx.update({saved: true}));
+export const saveProject = async (ctx) => {
+  const haveToSave = await ctx.needSave();
+  if (haveToSave) return realSaveProject(ctx);
+};
 
 /** Determine if the project need saving
  *
@@ -223,18 +216,18 @@ export const printVariant = (ctx, parameters) => {
 
 export const contextFunctions = {
   addPart,
+  deletePart,
+  exportPart,
+  exportProject,
   getPartTitle,
   isOpen,
-  exportPart,
   isPartDifferent,
   loadPartIntoContext,
   loadProject,
   movePart,
   needSave,
   newProject,
+  printVariant,
   savePartFromContext,
   saveProject,
-  deletePart,
-  exportProject,
-  printVariant,
 };

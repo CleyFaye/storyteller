@@ -86,7 +86,7 @@ export const printStory = async (paragraphs) => {
   await printPDF(settings.binPath, pdfName, settings.printerName, settings.duplex);
 };
 
-export const list = async () => {
+export const list = () => {
   if (os.platform() === "win32") {
     try {
       const output = execSync("wmic printer list brief", {encoding: "utf-8"});

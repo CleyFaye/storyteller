@@ -30,20 +30,18 @@ class Import extends React.PureComponent {
     this.setState({value});
   };
 
-  render() {
-    return (
-      <>
-        <AppBar position="static">
-          <Tabs onChange={this.handleChange} value={this.state.value}>
-            <Tab label="From JSON file" />
-          </Tabs>
-        </AppBar>
-        <ImportPanel index={0} value={this.state.value}>
-          <FromJSON />
-        </ImportPanel>
-      </>
-    );
-  }
+  render = () => (
+    <>
+      <AppBar position="static">
+        <Tabs onChange={this.handleChange} value={this.state.value}>
+          <Tab label="From JSON file" />
+        </Tabs>
+      </AppBar>
+      <ImportPanel index={0} value={this.state.value}>
+        <FromJSON />
+      </ImportPanel>
+    </>
+  );
 }
 Import.propTypes = {};
 

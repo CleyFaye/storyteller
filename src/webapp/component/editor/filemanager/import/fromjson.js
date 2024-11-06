@@ -7,6 +7,7 @@ import {Redirect} from "react-router-dom";
 
 import ProjectCtx from "../../../../context/project.js";
 import {listExisting} from "../../../../service/project.js";
+import {magicVersion1, magicVersion2} from "../../../../service/setting.js";
 
 const loadFileContent = (file) =>
   // eslint-disable-next-line promise/avoid-new
@@ -62,7 +63,6 @@ class FromJSON extends React.PureComponent {
     this.setState({state: State.LOADING});
     // eslint-disable-next-line promise/prefer-await-to-then
     this.loadFile(file).catch((error) => {
-      console.error(error);
       this.setState({error: error ? error.toString() : "?"});
     });
   };
@@ -70,10 +70,10 @@ class FromJSON extends React.PureComponent {
   loadFile = async (file) => {
     const fileContent = await loadFileContent(file);
     const data = JSON.parse(fileContent);
-    if (data.magicVersion === 1) {
+    if (data.magicVersion === magicVersion1) {
       return this.loadFileStorandomy(data);
     }
-    if (data.magicVersion === 2) {
+    if (data.magicVersion === magicVersion2) {
       return this.loadFileV2(data);
     }
     throw new Error("Unsupported file format");
@@ -142,7 +142,7 @@ class FromJSON extends React.PureComponent {
     />
   );
 
-  renderLoading = () => "Loading…";
+  static renderLoading = () => "Loading…";
 
   renderGetTitle = () => (
     <>
@@ -188,20 +188,20 @@ class FromJSON extends React.PureComponent {
     </>
   );
 
-  renderDone = () => <Redirect to="/editor/welcome" />;
+  static renderDone = () => <Redirect to="/editor/welcome" />;
 
   renderStateElement = () => {
     switch (this.state.state) {
       case State.GETFILE:
         return this.renderFileField();
       case State.LOADING:
-        return this.renderLoading();
+        return FromJSON.renderLoading();
       case State.GETTITLE:
         return this.renderGetTitle();
       case State.CONFIRM_ERASE:
         return this.renderConfirmErase();
       case State.DONE:
-        return this.renderDone();
+        return FromJSON.renderDone();
       default:
         throw new Error(`Unexpected state ${this.state.state}`);
     }

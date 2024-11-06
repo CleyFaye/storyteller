@@ -29,6 +29,7 @@ const handleMenuEntry = (entry, actionHandler) => {
     );
   } else if (entry.action) {
     return (
+      // eslint-disable-next-line react/jsx-no-bind
       <ListItem button key={entry.action} onClick={() => actionHandler(entry.action)}>
         {renderMenuEntryContent(entry)}
       </ListItem>
@@ -39,7 +40,7 @@ const handleMenuEntry = (entry, actionHandler) => {
 export const buildMenuList = (menuEntries, actionHandler) => {
   let dividerId = 0;
   return menuEntries.map((entry) =>
-    entry == "divider" ? (
+    entry === "divider" ? (
       <Divider key={`divider${++dividerId}`} />
     ) : (
       handleMenuEntry(entry, actionHandler)

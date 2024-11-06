@@ -3,9 +3,11 @@ import {PDFDocument, StandardFonts, PageSizes, rgb} from "pdf-lib";
 
 import {getAll} from "./setting.js";
 
+/* eslint-disable no-magic-numbers */
 const mmToIn = (value) => value / 25.4;
 const inToPoint = (value) => value * 72;
 const mmToPoint = (value) => inToPoint(mmToIn(value));
+/* eslint-enable no-magic-numbers */
 
 /** Aggregate all paragraphs into lines */
 const paragraphsToLines = (paragraphs) =>
@@ -128,12 +130,14 @@ export const makePDF = async (paragraphs, outputPath) => {
   let currentPage = pdfDoc.addPage(PageSizes.A4);
 
   const {width, height} = currentPage.getSize();
-  const horizontalMargin = mmToPoint(20);
-  const verticalMargin = mmToPoint(20);
-  const workWidth = width - 2 * horizontalMargin;
-  const workHeight = height - 2 * verticalMargin;
+  const baseMargin = 20;
+  const horizontalMargin = mmToPoint(baseMargin);
+  const verticalMargin = mmToPoint(baseMargin);
+  const workWidth = width - horizontalMargin - horizontalMargin;
+  const workHeight = height - verticalMargin - verticalMargin;
 
-  const lineHeight = fontObj.heightAtSize(fontSize) * 1.15;
+  const baseFontScale = 1.15;
+  const lineHeight = fontObj.heightAtSize(fontSize) * baseFontScale;
 
   const lines = cutLines(paragraphsToLines(paragraphs), workWidth, fontObj, fontSize);
 

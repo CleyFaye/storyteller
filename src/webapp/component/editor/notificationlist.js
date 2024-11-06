@@ -5,24 +5,23 @@ import React from "react";
 import NotificationCtx from "../../context/notification.js";
 import {notificationEnum} from "../../service/notification.js";
 
-class NotificationList extends React.Component {
+class NotificationList extends React.PureComponent {
   /** Build a single notification object */
-  buildNotification(key) {
+  buildNotification = (key) => {
     const {label} = notificationEnum[key];
     return (
       <Snackbar
         autoHideDuration={6000}
         key={key}
         message={label}
+        // eslint-disable-next-line react/jsx-no-bind
         onClose={() => this.props.notificationCtx.update({[key]: false})}
         open={this.props.notificationCtx[key]}
       />
     );
-  }
+  };
 
-  render() {
-    return Object.keys(notificationEnum).map((key) => this.buildNotification(key));
-  }
+  render = () => Object.keys(notificationEnum).map((key) => this.buildNotification(key));
 }
 NotificationList.propTypes = {
   notificationCtx: PropTypes.object,

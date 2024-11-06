@@ -1,33 +1,34 @@
+/* eslint-disable no-use-before-define */
 /** Build an empty chapter part */
 const buildNewChapterPart = (partDef) => ({
-  type: PartTypes.chapter.identifier,
   title: partDef.title,
+  type: PartTypes.chapter.identifier,
   variants: partDef.variants || [],
 });
 
 /** Duplicate content into a new object */
 const loadChapterIntoContext = (partData) => ({
-  partType: PartTypes.chapter.identifier,
   partTitle: partData.title,
+  partType: PartTypes.chapter.identifier,
   partVariants: partData.variants.slice(),
 });
 
 /** Return the part object from contextData */
 const saveChapterFromContext = (contextData) => ({
-  type: "chapter",
   title: contextData.partTitle,
+  type: "chapter",
   variants: contextData.partVariants.slice(),
 });
 
 const isChapterDifferent = (partData, contextData) => {
-  if (partData.title != contextData.partTitle) {
+  if (partData.title !== contextData.partTitle) {
     return true;
   }
-  if (partData.variants.length != contextData.partVariants.length) {
+  if (partData.variants.length !== contextData.partVariants.length) {
     return true;
   }
   for (let i = 0; i < partData.variants.length; ++i) {
-    if (partData.variants[i] != contextData.partVariants[i]) {
+    if (partData.variants[i] !== contextData.partVariants[i]) {
       return true;
     }
   }
@@ -47,23 +48,23 @@ const getChapterTitle = (partData) =>
 /** Possible part types */
 export const PartTypes = {
   chapter: {
-    // Identifier to save into file/object
-    identifier: "chapter",
     // Function to create an empty chapter part
     buildNew: buildNewChapterPart,
+    // Export a JSON-serializable object that can be provided to recreate the
+    // part.
+    export: exportChapter,
+    // Get a display title for editor UI
+    getTitle: getChapterTitle,
+    // Identifier to save into file/object
+    identifier: "chapter",
+    // Check if a context state is different from the stored part (=if it need
+    // to be saved)
+    isDifferent: isChapterDifferent,
     // Convert an existing part into a "context" object containing a copy of the
     // content.
     loadIntoContext: loadChapterIntoContext,
     // Update a part using data from an editor context
     saveFromContext: saveChapterFromContext,
-    // Export a JSON-serializable object that can be provided to recreate the
-    // part.
-    export: exportChapter,
-    // Check if a context state is different from the stored part (=if it need
-    // to be saved)
-    isDifferent: isChapterDifferent,
-    // Get a display title for editor UI
-    getTitle: getChapterTitle,
   },
 };
 
@@ -114,7 +115,7 @@ export const exportPart = (part) => getPartType(part.type).export(part);
  * true if the context needs to be saved
  */
 export const isDifferent = (part, contextData) => {
-  if (!part || part.type != contextData.partType) {
+  if (!part || part.type !== contextData.partType) {
     return true;
   }
   const partTypeDef = getPartType(part.type);

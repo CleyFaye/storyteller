@@ -10,14 +10,14 @@ import {notificationEnum} from "./notification.js";
  *
  * @return {Promise}
  */
-export const save = (projectCtx, saveCtx, notificationCtx) => {
-  if (saveCtx.needSave) {
-    return saveCtx.save();
+export const save = async (projectCtx, saveCtx, notificationCtx) => {
+  if (saveCtx.needSave) return saveCtx.save();
+  try {
+    await projectCtx.saveProject();
+    notificationCtx.show(notificationEnum.saveSuccess);
+  } catch {
+    notificationCtx.show(notificationEnum.saveFailure);
   }
-  return projectCtx
-    .saveProject()
-    .then(() => notificationCtx.show(notificationEnum.saveSuccess))
-    .catch(() => notificationCtx.show(notificationEnum.saveFailure));
 };
 
 /** Call the designated action
