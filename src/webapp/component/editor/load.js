@@ -39,14 +39,19 @@ class Load extends React.PureComponent {
     })().catch(() => this.props.notificationCtx.show(notificationEnum.networkReadError));
   };
 
+  componentDidUpdate = (oldProps, oldState) => {
+    if (oldState.loadItem !== this.state.loadItem && this.state.loadItem) {
+      if (this.props.projectCtx.needSave()) {
+        this.setState({showWarning: true});
+      } else {
+        this.handleLoadConfirm();
+      }
+    }
+  };
+
   /** User clicked on a project to load it */
   handleLoad = (projectName) => {
     this.setState({loadItem: projectName});
-    if (this.props.projectCtx.needSave()) {
-      this.setState({showWarning: true});
-    } else {
-      this.handleLoadConfirm();
-    }
   };
 
   /** User confirmed loading */

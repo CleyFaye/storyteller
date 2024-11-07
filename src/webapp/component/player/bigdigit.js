@@ -7,9 +7,24 @@ class BigDigit extends React.PureComponent {
     super(props);
     this.state = {
       displayedNumber: this.props.value,
+      numberClass: this.getNumberClass(this.props.value),
     };
     this._cycleTimer = null;
   }
+
+  componentDidUpdate = (oldProps, oldState) => {
+    if (
+      oldState.displayedNumber !== this.state.displayedNumber ||
+      oldProps.value !== this.props.value
+    ) {
+      this.setState((oldState2) => ({numberClass: this.getNumberClass(oldState2.displayedNumber)}));
+      if (this.state.displayedNumber !== this.props.value) this.triggerCycle();
+    }
+  };
+
+  componentWillUnmount = () => {
+    if (this._cycleTimer !== null) clearTimeout(this._cycleTimer);
+  };
 
   handleGoHigher = () => {
     const newValue = this.props.value + 1;
@@ -27,12 +42,12 @@ class BigDigit extends React.PureComponent {
     return Math.abs(offset) > 5 ? !naturalForward : naturalForward;
   };
 
-  getNumberClass = () => {
-    if (this.state.displayedNumber !== this.props.value) {
+  getNumberClass = (displayedNumber) => {
+    if (displayedNumber !== this.props.value) {
       const direction = this.goForward() ? "forward" : "backward";
-      return `from-${this.state.displayedNumber}-${direction}`;
+      return `from-${displayedNumber}-${direction}`;
     }
-    return `fixed-${this.state.displayedNumber}`;
+    return `fixed-${displayedNumber}`;
   };
 
   updateCycle = () => {
@@ -45,7 +60,6 @@ class BigDigit extends React.PureComponent {
       if (newValue > 9) {
         newValue = 0;
       }
-      this.triggerCycle();
       return {displayedNumber: newValue};
     });
   };
@@ -60,26 +74,13 @@ class BigDigit extends React.PureComponent {
     this._cycleTimer = setTimeout(() => this.updateCycle(), 500);
   };
 
-  componentWillUnmount = () => {
-    if (this._cycleTimer) {
-      clearTimeout(this._cycleTimer);
-    }
-  };
-
-  componentDidUpdate = () => {
-    this.triggerCycle();
-  };
-
-  render = () => {
-    const numberClass = this.getNumberClass();
-    return (
-      <div className={this.props.className}>
-        <div className="upButton" onClick={this.handleGoHigher} />
-        <div className={`digit ${numberClass}`} />
-        <div className="downButton" onClick={this.handleGoLower} />
-      </div>
-    );
-  };
+  render = () => (
+    <div className={this.props.className}>
+      <div className="upButton" onClick={this.handleGoHigher} />
+      <div className={`digit ${this.state.numberClass}`} />
+      <div className="downButton" onClick={this.handleGoLower} />
+    </div>
+  );
 }
 BigDigit.propTypes = {
   className: PropTypes.string,

@@ -31,7 +31,8 @@ class Printer extends React.PureComponent {
   };
 
   handleSave = () => {
-    this.setState({loading: true})(async () => {
+    this.setState({loading: true});
+    (async () => {
       await setAll({
         printerName: this.state.printerName,
         binPath: this.state.binPath,
@@ -101,11 +102,7 @@ class Printer extends React.PureComponent {
           <br />
           <FormControlLabel
             control={
-              <Checkbox
-                checked={this.state.duplex}
-                color="primary"
-                onChange={this.changeCheckboxHandler("duplex")}
-              />
+              <Checkbox checked={this.state.duplex} color="primary" onChange={this.handleChange} />
             }
             label="Two-sided printing (linux only)"
           />
