@@ -19,7 +19,7 @@ const loadFileContent = (file) =>
     reader.onerror = (e) => {
       reject(e);
     };
-    reader.readAsText(file);
+    reader.readAsText(file[0]);
   });
 
 const State = {
